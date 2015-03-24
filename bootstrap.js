@@ -6,17 +6,15 @@ var greasyscripts = (function() {
 	var broadcaster;
 	var menuitems = [];
 
-	var getDomain = function(url) {
-		var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+	var getDomain = function(uri) {
 		var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Components.interfaces.nsIEffectiveTLDService);
 
-		var uri = ioService.newURI(url, null, null);
 		try {
 			url = eTLDService.getBaseDomain(uri);
 		}
 		catch (e) {
 			// console.log(e);
-			url = url.hostname;
+			url = uri.host;
 		}
 
 		return url;
@@ -42,7 +40,7 @@ var greasyscripts = (function() {
 	/** Public Methods **/
 	return {
 		openScriptsLink: function(window) {
-			var url = getDomain(window.content.location);
+			var url = getDomain(window.gBrowser.currentURI);
 			window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + url);
 		},
 
