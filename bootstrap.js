@@ -52,9 +52,12 @@ var greasyscripts = (function() {
 			const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 			// create a broadcaster that can be used to update attribute of multiple menuitems at once
+			window.greasyscripts = {openScriptsLink: greasyscripts.openScriptsLink};
+			
 			broadcaster = document.createElementNS(NS, "broadcaster");
 			broadcaster.id = "greasyscripts_broadcaster";
 			broadcaster.setAttribute("label", "Scripts from Greasy Fork");
+            broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
 
 			var broadcasterset = document.getElementById("mainBroadcasterSet");
 			broadcasterset.appendChild(broadcaster);
@@ -68,8 +71,6 @@ var greasyscripts = (function() {
 
 			menuitems[0] = menuitem.cloneNode(true);
 			menuitems[1] = menuitem.cloneNode(true);
-			menuitems[0].addEventListener("command", function() {greasyscripts.openScriptsLink(window);}, false);
-			menuitems[1].addEventListener("command", function() {greasyscripts.openScriptsLink(window);}, false);
 
 			var menupopup1 = GM_menu.firstChild;
 			var menupopup2 = GM_icon.firstChild;
