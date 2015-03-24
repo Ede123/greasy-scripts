@@ -21,6 +21,23 @@ var greasyscripts = (function() {
 
 		return url;
 	};
+	
+	var windowListener = {
+		onOpenWindow: function(aWindow) {
+			var domWindow = aWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
+			// Wait for the window to finish loading
+			domWindow.addEventListener("load", function onLoad() {
+				domWindow.removeEventListener("load", onLoad, false);
+				if (domWindow.document.documentElement.getAttribute("windowtype") == "navigator:browser") {
+					greasyscripts.loadIntoWindow(domWindow);
+				}
+			}, false);
+		},
+	 
+		onCloseWindow: function(aWindow) {},
+		onWindowTitleChange: function(aWindow, aTitle) {}
+	};
+
 
 	/** Public Methods **/
 	return {
@@ -76,21 +93,8 @@ var greasyscripts = (function() {
 			broadcaster.parentNode.removeChild(broadcaster);
 		},
 
-
-		windowListener: {
-			onOpenWindow: function(aWindow) {
-				var domWindow = aWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
-				// Wait for the window to finish loading
-				domWindow.addEventListener("load", function onLoad() {
-					domWindow.removeEventListener("load", onLoad, false);
-					if (domWindow.document.documentElement.getAttribute("windowtype") == "navigator:browser") {
-						greasyscripts.loadIntoWindow(domWindow);
-					}
-				}, false);
-			},
-		 
-			onCloseWindow: function(aWindow) {},
-			onWindowTitleChange: function(aWindow, aTitle) {}
+		getWindowListener: function() {
+			return windowListener;
 		}
 	};
 
@@ -110,7 +114,7 @@ function startup(data, reason) {
 	}
 
 	// Load into any new windows
-	Services.wm.addListener(greasyscripts.windowListener);
+	Services.wm.addListener(greasyscripts.getWindowListener());
 }
 
 function shutdown(data, reason) {
@@ -119,7 +123,7 @@ function shutdown(data, reason) {
 		return;
 
 	// Stop listening for new windows
-	Services.wm.removeListener(greasyscripts.windowListener);
+	Services.wm.removeListener(greasyscripts.getWindowListener());
 
 	// Unload from any existing windows
 	var windows = Services.wm.getEnumerator("navigator:browser");
