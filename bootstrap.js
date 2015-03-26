@@ -1,3 +1,5 @@
+"use strict";
+
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
@@ -10,6 +12,7 @@ var greasyscripts = (function() {
 	var getDomain = function(uri) {
 		var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Components.interfaces.nsIEffectiveTLDService);
 
+		var url;
 		try {
 			url = eTLDService.getBaseDomain(uri);
 		}
@@ -143,6 +146,8 @@ var greasyscripts = (function() {
 
 			// remove the broadcaster
 			broadcaster.parentNode.removeChild(broadcaster);
+			
+			delete window.greasyscripts;
 		},
 
 		getWindowListener: function() {
