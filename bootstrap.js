@@ -1,5 +1,6 @@
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
+const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 
 var greasyscripts = (function() {
 
@@ -19,10 +20,25 @@ var greasyscripts = (function() {
 
 		return url;
 	};
-
+	
+	var updateData = function(window, data) {
+		broadcaster.setAttribute("acceltext", data.count);
+	};
+	
 	var updateLocation = function(window, uri) {
-		//console.log(window);
-		console.log(uri.spec);
+		if (uri.spec == "about:blank") {
+			broadcaster.removeAttribute("acceltext");
+			return;
+		}
+		
+		var url = getDomain(window.gBrowser.currentURI);
+		
+		var request = new XMLHttpRequest();
+		request.open("get", "https://greasyfork.org/en/scripts/by-site/" + url + ".json?meta=1", true);
+		request.responseType = "json";
+		request.onload = function() {updateData(window, this.response);};
+		request.onerror = function(event) {console.log(event);};
+		request.send();
 	};
 
 	var message_pageshow = function(message) {
