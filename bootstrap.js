@@ -19,7 +19,30 @@ var greasyscripts = (function() {
 
 		return url;
 	};
-	
+
+	var updateLocation = function(window, uri) {
+		//console.log(window);
+		console.log(uri.spec);
+	};
+
+	var message_pageshow = function(message) {
+		var browser = message.target; // the <browser> that received the "pageshow" message from frame content
+
+		// only update location if the browser is the primary browser for content (which is the selected browser)
+		if (browser.getAttribute("type") == "content-primary")
+			updateLocation(browser.ownerGlobal, browser.currentURI);
+	};
+
+	var message_TabSelect = function(message) {
+		var browser = message.target; // the <browser> that received the "pageshow" message from frame content
+		updateLocation(browser.ownerGlobal, browser.currentURI);
+	};
+
+	var event_TabSelect = function(event) {
+		var tab = event.target; // the <tab> that dispatched the "TabSelect" event
+		tab.linkedBrowser.messageManager.sendAsyncMessage("greasyscripts:TabSelect");
+	};
+
 	var windowListener = {
 		onOpenWindow: function(aWindow) {
 			var domWindow = aWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
@@ -31,7 +54,7 @@ var greasyscripts = (function() {
 				}
 			}, false);
 		},
-	 
+
 		onCloseWindow: function(aWindow) {},
 		onWindowTitleChange: function(aWindow, aTitle) {}
 	};
@@ -53,11 +76,11 @@ var greasyscripts = (function() {
 
 			// create a broadcaster that can be used to update attribute of multiple menuitems at once
 			window.greasyscripts = {openScriptsLink: greasyscripts.openScriptsLink};
-			
+
 			broadcaster = document.createElementNS(NS, "broadcaster");
 			broadcaster.id = "greasyscripts_broadcaster";
 			broadcaster.setAttribute("label", "Scripts from Greasy Fork");
-            broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
+			broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
 
 			var broadcasterset = document.getElementById("mainBroadcasterSet");
 			broadcasterset.appendChild(broadcaster);
@@ -76,11 +99,25 @@ var greasyscripts = (function() {
 			var menupopup2 = GM_icon.firstChild;
 			menupopup1.insertBefore(menuitems[0], menupopup1.childNodes[3]);
 			menupopup2.insertBefore(menuitems[1], menupopup2.childNodes[3]);
+
+			// add listeners to detect location changes
+			window.gBrowser.tabContainer.addEventListener("TabSelect", event_TabSelect, false);
+
+			window.messageManager.loadFrameScript("chrome://greasyscripts/content/framescript.js", true);
+			window.messageManager.addMessageListener("greasyscripts:pageshow", message_pageshow);
+			window.messageManager.addMessageListener("greasyscripts:TabSelect", message_TabSelect);
 		},
 
 		unloadFromWindow: function(window) {
 			if (!window)
 				return;
+
+			// remove the listeners
+			window.gBrowser.tabContainer.removeEventListener("TabSelect", event_TabSelect);
+
+			window.messageManager.removeDelayedFrameScript("chrome://greasyscripts/content/framescript.js");
+			window.messageManager.removeMessageListener("greasyscripts:pageshow", message_pageshow);
+			window.messageManager.removeMessageListener("greasyscripts:TabSelect", message_TabSelect);
 
 			// remove all menuitems that were inserted
 			var menuitem;
