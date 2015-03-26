@@ -6,9 +6,6 @@ const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttpreq
 
 var greasyscripts = (function() {
 
-	var broadcaster;
-	var menuitems = [];
-
 	var getDomain = function(uri) {
 		var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Components.interfaces.nsIEffectiveTLDService);
 
@@ -25,11 +22,13 @@ var greasyscripts = (function() {
 	};
 	
 	var updateData = function(window, data) {
+		var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 		broadcaster.setAttribute("acceltext", data.count);
 	};
 	
 	var updateLocation = function(window, uri) {
 		if (uri.spec == "about:blank") {
+			var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 			broadcaster.removeAttribute("acceltext");
 			return;
 		}
@@ -96,7 +95,7 @@ var greasyscripts = (function() {
 			// create a broadcaster that can be used to update attribute of multiple menuitems at once
 			window.greasyscripts = {openScriptsLink: greasyscripts.openScriptsLink};
 
-			broadcaster = document.createElementNS(NS, "broadcaster");
+			var broadcaster = document.createElementNS(NS, "broadcaster");
 			broadcaster.id = "greasyscripts_broadcaster";
 			broadcaster.setAttribute("label", "Scripts from Greasy Fork");
 			broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
@@ -109,8 +108,10 @@ var greasyscripts = (function() {
 			var GM_icon = document.getElementById("greasemonkey-tbb");
 
 			var menuitem = document.createElementNS(NS, "menuitem");
+			menuitem.classList.add("greasyscripts_menuitem");
 			menuitem.setAttribute("observes", "greasyscripts_broadcaster");
 
+			var menuitems = [];
 			menuitems[0] = menuitem.cloneNode(true);
 			menuitems[1] = menuitem.cloneNode(true);
 
@@ -130,6 +131,7 @@ var greasyscripts = (function() {
 		unloadFromWindow: function(window) {
 			if (!window)
 				return;
+			var document = window.document;
 
 			// remove the listeners
 			window.gBrowser.tabContainer.removeEventListener("TabSelect", event_TabSelect);
@@ -139,12 +141,13 @@ var greasyscripts = (function() {
 			window.messageManager.removeMessageListener("greasyscripts:TabSelect", message_TabSelect);
 
 			// remove all menuitems that were inserted
-			var menuitem;
-			while (menuitem = menuitems.pop()) {
-				menuitem.parentNode.removeChild(menuitem);
+			var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
+			for (var i = menuitems.length-1; i >= 0 ; i--) {
+				menuitems[i].parentNode.removeChild(menuitems[i]);
 			}
 
 			// remove the broadcaster
+			var broadcaster = document.getElementById("greasyscripts_broadcaster");
 			broadcaster.parentNode.removeChild(broadcaster);
 			
 			delete window.greasyscripts;
