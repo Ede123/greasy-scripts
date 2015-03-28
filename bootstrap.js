@@ -4,6 +4,22 @@ const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 
 
+this.windowListener = {
+	onOpenWindow: function(aWindow) {
+		var domWindow = aWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
+		// Wait for the window to finish loading
+		domWindow.addEventListener("load", function onLoad() {
+			domWindow.removeEventListener("load", onLoad, false);
+			if (domWindow.document.documentElement.getAttribute("windowtype") == "navigator:browser") {
+				greasyscripts.loadIntoWindow(domWindow);
+			}
+		}, false);
+	},
+
+	onCloseWindow: function(aWindow) {},
+	onWindowTitleChange: function(aWindow, aTitle) {}
+};
+
 
 /** Bootstrap Entry Points **/
 
@@ -19,7 +35,7 @@ function startup(data, reason) {
 	}
 
 	// Load into any new windows
-	Services.wm.addListener(greasyscripts.getWindowListener());
+	Services.wm.addListener(windowListener);
 }
 
 function shutdown(data, reason) {
@@ -28,7 +44,7 @@ function shutdown(data, reason) {
 		return;
 
 	// Stop listening for new windows
-	Services.wm.removeListener(greasyscripts.getWindowListener());
+	Services.wm.removeListener(windowListener);
 
 	// Unload from any existing windows
 	var windows = Services.wm.getEnumerator("navigator:browser");

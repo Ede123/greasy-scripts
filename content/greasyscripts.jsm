@@ -1,12 +1,14 @@
+"use strict";
+
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 const console = (Components.utils.import("resource://gre/modules/devtools/Console.jsm", {})).console;
 const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 
 
-var EXPORTED_SYMBOLS = ["greasyscripts"];
+this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 
-var getDomain = function(uri) {
+function getDomain(uri) {
 	var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
 
 	var url;
@@ -19,14 +21,14 @@ var getDomain = function(uri) {
 	}
 
 	return url;
-};
+}
 
-var updateData = function(window, data) {
+function updateData(window, data) {
 	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 	broadcaster.setAttribute("acceltext", data.count);
-};
+}
 
-var updateLocation = function(window, uri) {
+function updateLocation(window, uri) {
 	if (uri.spec == "about:blank") {
 		var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 		broadcaster.removeAttribute("acceltext");
@@ -41,53 +43,36 @@ var updateLocation = function(window, uri) {
 	request.onload = function() {updateData(window, this.response);};
 	request.onerror = function(event) {console.log(event);};
 	request.send();
-};
+}
 
 
-var message_pageshow = function(message) {
+function message_pageshow(message) {
 	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
 
 	// only update location if the browser is the primary browser for content (which is the selected browser)
 	if (browser.getAttribute("type") == "content-primary")
 		updateLocation(browser.ownerGlobal, browser.currentURI);
-};
+}
 
-var message_TabSelect = function(message) {
+function message_TabSelect(message) {
 	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
 	updateLocation(browser.ownerGlobal, browser.currentURI);
-};
+}
 
-var event_TabSelect = function(event) {
+function event_TabSelect(event) {
 	var tab = event.target; // the <tab> that dispatched the "TabSelect" event
 	tab.linkedBrowser.messageManager.sendAsyncMessage("greasyscripts:TabSelect");
-};
+}
 
 
-var windowListener = {
-	onOpenWindow: function(aWindow) {
-		var domWindow = aWindow.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
-		// Wait for the window to finish loading
-		domWindow.addEventListener("load", function onLoad() {
-			domWindow.removeEventListener("load", onLoad, false);
-			if (domWindow.document.documentElement.getAttribute("windowtype") == "navigator:browser") {
-				greasyscripts.loadIntoWindow(domWindow);
-			}
-		}, false);
-	},
+this.greasyscripts = {
 
-	onCloseWindow: function(aWindow) {},
-	onWindowTitleChange: function(aWindow, aTitle) {}
-};
-
-
-var greasyscripts = {
-
-	openScriptsLink: function(window) {
+	openScriptsLink(window) {
 		var url = getDomain(window.gBrowser.currentURI);
 		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + url);
 	},
 
-	loadIntoWindow: function(window) {
+	loadIntoWindow(window) {
 		if (!window)
 			return;
 		var document = window.document;
@@ -130,7 +115,7 @@ var greasyscripts = {
 		window.messageManager.addMessageListener("greasyscripts:TabSelect", message_TabSelect);
 	},
 
-	unloadFromWindow: function(window) {
+	unloadFromWindow(window) {
 		if (!window)
 			return;
 		var document = window.document;
@@ -153,9 +138,5 @@ var greasyscripts = {
 		broadcaster.parentNode.removeChild(broadcaster);
 
 		delete window.greasyscripts;
-	},
-
-	getWindowListener: function() {
-		return windowListener;
 	}
 };
