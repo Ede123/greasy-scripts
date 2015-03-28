@@ -8,6 +8,17 @@ const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttpreq
 this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 
+function setText(window, text) {
+	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
+	broadcaster.setAttribute("acceltext", text);
+}
+
+function removeText(window) {
+	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
+	broadcaster.removeAttribute("acceltext");
+}
+
+
 function getDomain(uri) {
 	var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
 
@@ -24,14 +35,12 @@ function getDomain(uri) {
 }
 
 function updateData(window, data) {
-	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
-	broadcaster.setAttribute("acceltext", data.count);
+	setText(window, data.count)
 }
 
 function updateLocation(window, uri) {
 	if (uri.spec == "about:blank") {
-		var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
-		broadcaster.removeAttribute("acceltext");
+		removeText(window);
 		return;
 	}
 	
@@ -46,6 +55,14 @@ function updateLocation(window, uri) {
 }
 
 
+function message_pagehide(message) {
+	var browser = message.target; // the <browser> that received the "pagehide" message from frame content
+
+	// only remove text if the browser is the primary browser for content (which is the selected browser)
+	if (browser.getAttribute("type") == "content-primary")
+		removeText(browser.ownerGlobal);
+}
+
 function message_pageshow(message) {
 	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
 
@@ -56,11 +73,16 @@ function message_pageshow(message) {
 
 function message_TabSelect(message) {
 	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
+
 	updateLocation(browser.ownerGlobal, browser.currentURI);
 }
 
 function event_TabSelect(event) {
 	var tab = event.target; // the <tab> that dispatched the "TabSelect" event
+
+	// remove count when switching tabs
+	removeText(tab.ownerGlobal);
+
 	tab.linkedBrowser.messageManager.sendAsyncMessage("greasyscripts:TabSelect");
 }
 
@@ -111,6 +133,7 @@ this.greasyscripts = {
 		window.gBrowser.tabContainer.addEventListener("TabSelect", event_TabSelect, false);
 
 		window.messageManager.loadFrameScript("chrome://greasyscripts/content/framescript.js", true);
+		window.messageManager.addMessageListener("greasyscripts:pagehide", message_pagehide);
 		window.messageManager.addMessageListener("greasyscripts:pageshow", message_pageshow);
 		window.messageManager.addMessageListener("greasyscripts:TabSelect", message_TabSelect);
 	},
@@ -124,6 +147,7 @@ this.greasyscripts = {
 		window.gBrowser.tabContainer.removeEventListener("TabSelect", event_TabSelect);
 
 		window.messageManager.removeDelayedFrameScript("chrome://greasyscripts/content/framescript.js");
+		window.messageManager.removeMessageListener("greasyscripts:pagehide", message_pagehide);
 		window.messageManager.removeMessageListener("greasyscripts:pageshow", message_pageshow);
 		window.messageManager.removeMessageListener("greasyscripts:TabSelect", message_TabSelect);
 
