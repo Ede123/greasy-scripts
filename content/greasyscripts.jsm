@@ -54,7 +54,7 @@ function updateData(window, data) {
 }
 
 function updateLocation(window, uri) {
-	var url = getDomain(window.gBrowser.currentURI);
+	var url = getDomain(uri);
 
 	// ignore about:blank (since Firefox *always* loads it when opening a page in a new tab)
 	// as well as invalid URIs which return an undefined URL
