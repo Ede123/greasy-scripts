@@ -1,6 +1,6 @@
 "use strict";
 
-const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
+const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -23,15 +23,19 @@ function removeText(window) {
 
 
 function getDomain(uri) {
-	var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
-
 	var url;
+
 	try {
+		var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
 		url = eTLDService.getBaseDomain(uri);
 	}
 	catch (e) {
-		// console.log(e);
-		url = uri.host;
+		if (e.result == Cr.NS_ERROR_HOST_IS_IP_ADDRESS) // IP adresses (e.g http://192.168.178.1)
+			url = uri.host;
+		else if (uri.spec.indexOf("about:") === 0) // special pages (e.g. about:addons)
+			url = uri.spec;
+		else
+			console.log("Error parsing URI: " + uri.spec + "\n" + e.message);
 	}
 
 	return url;
