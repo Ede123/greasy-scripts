@@ -13,6 +13,7 @@ this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 // the domain data cache
 this.cache = {};
+this.cache.maxAge = 24*60*60*1000; // maximum age of the cache before a domain is updated in milliseconds (1 day)
 
 
 function setText(window, text) {
@@ -60,6 +61,7 @@ function updateData(window, url, data) {
 	if (url) {
 		cache[url] = {};
 		cache[url].data = data;
+		cache[url].timestamp = Date.now();
 	}
 
 	var count = data.count;
@@ -78,7 +80,7 @@ function updateLocation(window, uri) {
 
 	// if the domain is cached use the cached entry
 	var cached = cache[url];
-	if (cached) {
+	if (cached && (Date.now() - cached.timestamp < cache.maxAge)) {
 		updateData(window, null, cached.data);
 		return;
 	}
