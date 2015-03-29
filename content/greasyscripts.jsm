@@ -57,10 +57,12 @@ function updateData(window, domain, data) {
 		return;
 
 	// update cache if this was a new request
-	if (domain) {
-		cache[domain] = {};
-		cache[domain].data = data;
-		cache[domain].timestamp = Date.now();
+	if (preferences.cacheEnabled) {
+		if (domain) {
+			cache[domain] = {};
+			cache[domain].data = data;
+			cache[domain].timestamp = Date.now();
+		}
 	}
 
 	var count = data.count;
@@ -78,10 +80,12 @@ function updateLocation(window, uri) {
 	}
 
 	// if the domain is cached use the cached entry
-	var cached = cache[domain];
-	if (cached && (Date.now() - cached.timestamp < preferences.cacheMaxAge)) {
-		updateData(window, null, cached.data);
-		return;
+	if (preferences.cacheEnabled) {
+		var cached = cache[domain];
+		if (cached && (Date.now() - cached.timestamp < preferences.cacheMaxAge)) {
+			updateData(window, null, cached.data);
+			return;
+		}
 	}
 
 	// otherwise make a new request
