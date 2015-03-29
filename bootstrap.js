@@ -26,6 +26,7 @@ this.windowListener = {
 function startup(data, reason) {
 	// Import add-on modules
 	Cu.import("chrome://greasyscripts/content/greasyscripts.jsm");
+	greasyscripts.init();
 
 	// Load into any existing windows
 	var windows = Services.wm.getEnumerator("navigator:browser");
@@ -54,6 +55,7 @@ function shutdown(data, reason) {
 	}
 
 	// Unload add-on modules
+	greasyscripts.unload();
 	Cu.unload("chrome://greasyscripts/content/greasyscripts.jsm");
 }
 
