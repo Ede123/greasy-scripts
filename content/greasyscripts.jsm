@@ -42,16 +42,26 @@ function getDomain(uri) {
 }
 
 function updateData(window, data) {
-	setText(window, data.count)
+	var count;
+	
+	if(data)
+		count = data.count;
+
+	if (typeof count === "undefined")
+		removeText(window);
+	else
+		setText(window, count);
 }
 
 function updateLocation(window, uri) {
-	if (uri.spec == "about:blank") {
+	var url = getDomain(window.gBrowser.currentURI);
+
+	// ignore about:blank (since Firefox *always* loads it when opening a page in a new tab)
+	// as well as invalid URIs which return an undefined URL
+	if ((url == "about:blank") || (typeof url === "undefined")) {
 		removeText(window);
 		return;
 	}
-
-	var url = getDomain(window.gBrowser.currentURI);
 
 	var request = new XMLHttpRequest();
 	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + url + ".json?meta=1", true);
