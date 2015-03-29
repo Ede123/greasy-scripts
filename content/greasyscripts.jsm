@@ -35,33 +35,33 @@ function updateCount(window, count) {
 
 
 function getDomain(uri) {
-	var url;
+	var domain;
 
 	try {
 		var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
-		url = eTLDService.getBaseDomain(uri);
+		domain = eTLDService.getBaseDomain(uri);
 	}
 	catch (e) {
 		if (e.result == Cr.NS_ERROR_HOST_IS_IP_ADDRESS) // IP adresses (e.g http://192.168.178.1)
-			url = uri.host;
+			domain = uri.host;
 		else if (uri.spec.indexOf("about:") === 0) // special pages (e.g. about:addons)
-			url = uri.spec;
+			domain = uri.spec;
 		else
 			console.log("Error parsing URI: " + uri.spec + "\n" + e.message);
 	}
 
-	return url;
+	return domain;
 }
 
-function updateData(window, url, data) {
+function updateData(window, domain, data) {
 	if (!data)
 		return;
 
 	// update cache if this was a new request
-	if (url) {
-		cache[url] = {};
-		cache[url].data = data;
-		cache[url].timestamp = Date.now();
+	if (domain) {
+		cache[domain] = {};
+		cache[domain].data = data;
+		cache[domain].timestamp = Date.now();
 	}
 
 	var count = data.count;
@@ -69,17 +69,17 @@ function updateData(window, url, data) {
 }
 
 function updateLocation(window, uri) {
-	var url = getDomain(uri);
+	var domain = getDomain(uri);
 
 	// ignore - about:blank (since Firefox *always* loads it when opening a page in a new tab)
-	//        - invalid URIs which return an undefined URL
-	if ((url == "about:blank") || (typeof url === "undefined")) {
+	//        - invalid URIs which return an undefined domain
+	if ((domain == "about:blank") || (typeof domain === "undefined")) {
 		removeText(window);
 		return;
 	}
 
 	// if the domain is cached use the cached entry
-	var cached = cache[url];
+	var cached = cache[domain];
 	if (cached && (Date.now() - cached.timestamp < cache.maxAge)) {
 		updateData(window, null, cached.data);
 		return;
@@ -87,9 +87,9 @@ function updateLocation(window, uri) {
 
 	// otherwise make a new request
 	var request = new XMLHttpRequest();
-	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + url + ".json?meta=1", true);
+	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + domain + ".json?meta=1", true);
 	request.responseType = "json";
-	request.onload = function() {updateData(window, url, this.response);};
+	request.onload = function() {updateData(window, domain, this.response);};
 	request.onerror = function(event) {console.log(event);};
 	request.send();
 }
@@ -119,8 +119,8 @@ this.progressListener = {
 this.greasyscripts = {
 
 	openScriptsLink(window) {
-		var url = getDomain(window.gBrowser.currentURI);
-		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + url);
+		var domain = getDomain(window.gBrowser.currentURI);
+		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + domain);
 	},
 
 	loadIntoWindow(window) {
