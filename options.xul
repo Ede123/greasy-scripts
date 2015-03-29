@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="Enable domain cache"/>
+	<setting type="control" title="Lifetime of cache entries">
+		<setting type="integer" pref="extensions.greasyscripts.cache.max_age.number"/>
+		<setting type="menulist" pref="extensions.greasyscripts.cache.max_age.unit">
+			<menulist>
+				<menupopup>
+					<menuitem value="milliseconds" label="millisecond(s)" hidden="true"/>
+					<menuitem value="seconds"      label="second(s)"      hidden="true"/>
+					<menuitem value="minutes"      label="minute(s)"      hidden="true"/>
+					<menuitem value="hours"        label="hour(s)"/>
+					<menuitem value="days"         label="day(s)"/>
+					<menuitem value="weeks"        label="week(s)"/>
+					<menuitem value="months"       label="months(s)"      hidden="true"/>
+					<menuitem value="years"        label="years(s)"       hidden="true"/>
+				</menupopup>
+			</menulist>
+		</setting>
+	</setting>
+</vbox>
