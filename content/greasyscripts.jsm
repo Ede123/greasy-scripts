@@ -1,7 +1,10 @@
 "use strict";
 
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
-const console = (Components.utils.import("resource://gre/modules/devtools/Console.jsm", {})).console;
+Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+
+const console = (Cu.import("resource://gre/modules/devtools/Console.jsm", {})).console;
 const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 
 
@@ -43,9 +46,9 @@ function updateLocation(window, uri) {
 		removeText(window);
 		return;
 	}
-	
+
 	var url = getDomain(window.gBrowser.currentURI);
-	
+
 	var request = new XMLHttpRequest();
 	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + url + ".json?meta=1", true);
 	request.responseType = "json";
@@ -55,36 +58,25 @@ function updateLocation(window, uri) {
 }
 
 
-function message_pagehide(message) {
-	var browser = message.target; // the <browser> that received the "pagehide" message from frame content
+this.progressListener = {
+	QueryInterface: XPCOMUtils.generateQI(["nsIWebProgressListener", "nsISupportsWeakReference"]),
 
-	// only remove text if the browser is the primary browser for content (which is the selected browser)
-	if (browser.getAttribute("type") == "content-primary")
-		removeText(browser.ownerGlobal);
-}
+    onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
+		switch (aFlags) {
+			case Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT:
+				return;
+			case Ci.nsIWebProgressListener.LOCATION_CHANGE_ERROR_PAGE:
+			default:
+				var window = Services.wm.getMostRecentWindow("navigator:browser");
+				updateLocation(window, aLocation);
+		}
+    },
 
-function message_pageshow(message) {
-	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
-
-	// only update location if the browser is the primary browser for content (which is the selected browser)
-	if (browser.getAttribute("type") == "content-primary")
-		updateLocation(browser.ownerGlobal, browser.currentURI);
-}
-
-function message_TabSelect(message) {
-	var browser = message.target; // the <browser> that received the "pageshow" message from frame content
-
-	updateLocation(browser.ownerGlobal, browser.currentURI);
-}
-
-function event_TabSelect(event) {
-	var tab = event.target; // the <tab> that dispatched the "TabSelect" event
-
-	// remove count when switching tabs
-	removeText(tab.ownerGlobal);
-
-	tab.linkedBrowser.messageManager.sendAsyncMessage("greasyscripts:TabSelect");
-}
+    onStateChange: function() {},
+    onProgressChange: function() {},
+    onStatusChange: function() {},
+    onSecurityChange: function() {}
+};
 
 
 this.greasyscripts = {
@@ -129,13 +121,8 @@ this.greasyscripts = {
 		menupopup1.insertBefore(menuitems[0], menupopup1.childNodes[3]);
 		menupopup2.insertBefore(menuitems[1], menupopup2.childNodes[3]);
 
-		// add listeners to detect location changes
-		window.gBrowser.tabContainer.addEventListener("TabSelect", event_TabSelect, false);
-
-		window.messageManager.loadFrameScript("chrome://greasyscripts/content/framescript.js", true);
-		window.messageManager.addMessageListener("greasyscripts:pagehide", message_pagehide);
-		window.messageManager.addMessageListener("greasyscripts:pageshow", message_pageshow);
-		window.messageManager.addMessageListener("greasyscripts:TabSelect", message_TabSelect);
+		// add a progress listener to detect location changes
+		window.gBrowser.addProgressListener(progressListener);
 	},
 
 	unloadFromWindow(window) {
@@ -143,13 +130,8 @@ this.greasyscripts = {
 			return;
 		var document = window.document;
 
-		// remove the listeners
-		window.gBrowser.tabContainer.removeEventListener("TabSelect", event_TabSelect);
-
-		window.messageManager.removeDelayedFrameScript("chrome://greasyscripts/content/framescript.js");
-		window.messageManager.removeMessageListener("greasyscripts:pagehide", message_pagehide);
-		window.messageManager.removeMessageListener("greasyscripts:pageshow", message_pageshow);
-		window.messageManager.removeMessageListener("greasyscripts:TabSelect", message_TabSelect);
+		// remove progress listener
+		window.gBrowser.removeProgressListener(progressListener);
 
 		// remove all menuitems that were inserted
 		var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
