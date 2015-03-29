@@ -11,6 +11,10 @@ const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttpreq
 this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 
+// the domain data cache
+this.cache = {};
+
+
 function setText(window, text) {
 	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 	broadcaster.setAttribute("acceltext", text);
@@ -19,6 +23,13 @@ function setText(window, text) {
 function removeText(window) {
 	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
 	broadcaster.removeAttribute("acceltext");
+}
+
+function updateCount(window, count) {
+	if (typeof count === "undefined")
+		removeText(window);
+	else
+		setText(window, count);
 }
 
 
@@ -41,32 +52,42 @@ function getDomain(uri) {
 	return url;
 }
 
-function updateData(window, data) {
-	var count;
-	
-	if(data)
-		count = data.count;
+function updateData(window, url, data) {
+	if (!data)
+		return;
 
-	if (typeof count === "undefined")
-		removeText(window);
-	else
-		setText(window, count);
+	// update cache if this was a new request
+	if (url) {
+		cache[url] = {};
+		cache[url].data = data;
+	}
+
+	var count = data.count;
+	updateCount(window, count);
 }
 
 function updateLocation(window, uri) {
 	var url = getDomain(uri);
 
-	// ignore about:blank (since Firefox *always* loads it when opening a page in a new tab)
-	// as well as invalid URIs which return an undefined URL
+	// ignore - about:blank (since Firefox *always* loads it when opening a page in a new tab)
+	//        - invalid URIs which return an undefined URL
 	if ((url == "about:blank") || (typeof url === "undefined")) {
 		removeText(window);
 		return;
 	}
 
+	// if the domain is cached use the cached entry
+	var cached = cache[url];
+	if (cached) {
+		updateData(window, null, cached.data);
+		return;
+	}
+
+	// otherwise make a new request
 	var request = new XMLHttpRequest();
 	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + url + ".json?meta=1", true);
 	request.responseType = "json";
-	request.onload = function() {updateData(window, this.response);};
+	request.onload = function() {updateData(window, url, this.response);};
 	request.onerror = function(event) {console.log(event);};
 	request.send();
 }
