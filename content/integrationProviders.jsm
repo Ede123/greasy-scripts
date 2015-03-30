@@ -6,11 +6,11 @@ const console = (Cu.import("resource://gre/modules/devtools/Console.jsm", {})).c
 this.EXPORTED_SYMBOLS = ["integrationProviders"];
 
 
-
 var IntegrationProvider = function(menuitemID) {
 	this.menuitemID = menuitemID;
 	this.menupopupParents = [];
 	this.menuitemInsertBefore = [];
+	this.toolbarbuttonID = "";
 };
 
 IntegrationProvider.prototype.beforeItem = function(menupopup, spec) {
@@ -50,6 +50,19 @@ IntegrationProvider.prototype.removeMenuitems = function(document) {
 	}
 };
 
+IntegrationProvider.prototype.highlight = function(document) {
+	if (this.toolbarbuttonID) {
+		var toolbarbutton = document.getElementById(this.toolbarbuttonID);
+		toolbarbutton.classList.add("greasyscripts_highlighted");
+	}
+};
+
+IntegrationProvider.prototype.unhighlight = function(document) {
+	if (this.toolbarbuttonID) {
+		var toolbarbutton = document.getElementById(this.toolbarbuttonID);
+		toolbarbutton.classList.remove("greasyscripts_highlighted");
+	}
+};
 
 
 // the "native" service provider, that is Firefox without any specific add-on installed
@@ -59,9 +72,10 @@ native.menuitemInsertBefore = ["prefSep"];
 
 // Greasemonkey (https://addons.mozilla.org/addon/greasemonkey/)
 var greasemonkey = new IntegrationProvider("greasyscripts_menuitem");
-greasemonkey.menupopupParents = ["gm_general_menu" /* the GM menu in tools menu */, 
+greasemonkey.menupopupParents = ["gm_general_menu" /* the GM menu in tools menu */,
                                  "greasemonkey-tbb" /* the GM toolbarbutton */];
 greasemonkey.menuitemInsertBefore = [3, 3];
+greasemonkey.toolbarbuttonID = "greasemonkey-tbb";
 
 
 

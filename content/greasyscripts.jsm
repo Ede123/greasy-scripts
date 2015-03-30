@@ -26,10 +26,19 @@ function removeText(window) {
 }
 
 function updateCount(window, count) {
+	// set text according to "count" (remove if "undefined")
 	if (typeof count === "undefined")
 		removeText(window);
 	else
 		setText(window, count);
+
+	// if in progressListener mode highlight toolbarbutton if count > 0 (unhighlight otherwise)
+	if (preferences.mode == 1) {
+		if (count)
+			integrationProviders[preferences.provider].highlight(window.document);
+		else
+			integrationProviders[preferences.provider].unhighlight(window.document);
+	}
 }
 
 
@@ -75,7 +84,7 @@ function updateLocation(window, uri) {
 	// ignore - about:blank (since Firefox *always* loads it when opening a page in a new tab)
 	//        - invalid URIs which return an undefined domain
 	if ((domain == "about:blank") || (typeof domain === "undefined")) {
-		removeText(window);
+		updateCount(window, null);
 		return;
 	}
 
@@ -163,7 +172,7 @@ this.greasyscripts = {
 
 		// append the menuitem in all locations the current integration provider offers
 		integrationProviders[preferences.provider].addMenuitems(document, menuitem);
-		
+	
 		// add listeners
 		switch (preferences.mode) {
 			case 1: // progress listener to detect location changes; update constantly
@@ -202,14 +211,28 @@ this.greasyscripts = {
 
 		delete window.greasyscripts;
 	},
-	
+
 	init() {
+		// register style sheets
+		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
+		sss.loadAndRegisterSheet(uri, sss.AUTHOR_SHEET);
+
+		// import add-on modules
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
 	},
-	
+
 	unload() {
+		// unload add-on modules
 		Cu.unload("chrome://greasyscripts/content/integrationProviders.jsm");
 		Cu.unload("chrome://greasyscripts/content/preferences.jsm");
+
+		//unregister style sheets
+		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
+		sss.unregisterSheet(uri, sss.AUTHOR_SHEET);
 	}
 };
