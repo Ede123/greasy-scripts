@@ -30,7 +30,7 @@ function updateCount(window, count) {
 	if (typeof count === "undefined")
 		removeText(window);
 	else
-		setText(window, count);
+		setText(window, count + " available");
 
 	// if in progressListener mode highlight toolbarbutton if count > 0 (unhighlight otherwise)
 	if (preferences.mode == 1) {
@@ -84,7 +84,7 @@ function updateLocation(window, uri) {
 	// ignore - about:blank (since Firefox *always* loads it when opening a page in a new tab)
 	//        - invalid URIs which return an undefined domain
 	if ((domain == "about:blank") || (typeof domain === "undefined")) {
-		updateCount(window, null);
+		updateCount(window, undefined);
 		return;
 	}
 

@@ -1,3 +1,12 @@
 .greasyscripts_highlighted .toolbarbutton-icon  {
 	background-image: -moz-radial-gradient(ellipse closest-side, rgba(0, 128, 255, 0.8), rgba(0, 128, 255, 0.1)) !important;
 }
+
+
+.greasyscripts_menuitem  .menu-accel {
+	color: #080;
+}
+
+.greasyscripts_menuitem  .menu-accel[value^="0"] {
+	color: #a00;
+}
