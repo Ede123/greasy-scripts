@@ -77,9 +77,17 @@ greasemonkey.menupopupParents = ["gm_general_menu" /* the GM menu in tools menu 
 greasemonkey.menuitemInsertBefore = [3, 3];
 greasemonkey.toolbarbuttonID = "greasemonkey-tbb";
 
+// Scriptish (https://addons.mozilla.org/addon/scriptish/)
+var scriptish = new IntegrationProvider("greasyscripts_menuitem");
+scriptish.menupopupParents = ["scriptish_general_menu" /* the Scriptish menu in tools menu */,
+                              "scriptish-button" /* the Scriptish toolbarbutton */];
+scriptish.menuitemInsertBefore = ["scriptish-tools-show-us", "scriptish-tb-new-us"];
+scriptish.toolbarbuttonID = "scriptish-button";
+
 
 
 this.integrationProviders = {
 	"native": native,
-	"greasemonkey": greasemonkey
+	"greasemonkey": greasemonkey,
+	"scriptish": scriptish
 };

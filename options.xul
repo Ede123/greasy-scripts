@@ -7,6 +7,7 @@
 			<menupopup width="250px">
 				<menuitem value="native" label="Native (works without other add-ons)"/>
 				<menuitem value="greasemonkey" label="Greasemonkey"/>
+				<menuitem value="scriptish" label="Scriptish"/>
 			</menupopup>
 		</menulist>
 	</setting>
