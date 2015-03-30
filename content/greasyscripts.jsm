@@ -156,7 +156,7 @@ this.greasyscripts = {
 		var broadcasterset = document.getElementById("mainBroadcasterSet");
 		broadcasterset.appendChild(broadcaster);
 
-		// create two menuitems which observe the broadcaster and append them to the GM tools menu / button
+		// create a menuitem which observes the broadcaster
 		var GM_menu = document.getElementById("gm_general_menu");
 		var GM_icon = document.getElementById("greasemonkey-tbb");
 
@@ -164,22 +164,16 @@ this.greasyscripts = {
 		menuitem.classList.add("greasyscripts_menuitem");
 		menuitem.setAttribute("observes", "greasyscripts_broadcaster");
 
-		var menuitems = [];
-		menuitems[0] = menuitem.cloneNode(true);
-		menuitems[1] = menuitem.cloneNode(true);
-
-		var menupopups = [];
-		menupopups[0] = GM_menu.firstChild;
-		menupopups[1] = GM_icon.firstChild;
-		menupopups[0].insertBefore(menuitems[0], menupopups[0].childNodes[3]);
-		menupopups[1].insertBefore(menuitems[1], menupopups[1].childNodes[3]);
-
+		// append the menuitem in all locations the current integration provider offers
+		integrationProviders["greasemonkey"].addMenuitems(document, menuitem);
+		
 		// add listeners
 		switch (preferences.mode) {
 			case 1: // progress listener to detect location changes; update constantly
 				window.gBrowser.addProgressListener(progressListener);
 				break;
 			case 2: // event listener for menupopups; update only when the popup is opened
+				var menuitems = integrationProviders["greasemonkey"].getMenuitems(document);
 				for (var i = 0; i < menuitems.length; i++) {
 					menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
 					menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
@@ -196,17 +190,14 @@ this.greasyscripts = {
 		// remove listeners (we can remove regardless of adding them or not; in the worst case it silently fails)
 		window.gBrowser.removeProgressListener(progressListener);
 
-		var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
+		var menuitems = integrationProviders["greasemonkey"].getMenuitems(document);
 		for (var i = 0; i < menuitems.length; i++) {
 			menuitems[i].parentNode.removeEventListener("popupshowing", event_popupshowing, false);
 			menuitems[i].parentNode.removeEventListener("popuphiding", event_popuphiding, false);
 		}
 
 		// remove all menuitems that were inserted
-		var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
-		for (var i = menuitems.length-1; i >= 0; i--) {
-			menuitems[i].parentNode.removeChild(menuitems[i]);
-		}
+		integrationProviders["greasemonkey"].removeMenuitems(document);
 
 		// remove the broadcaster
 		var broadcaster = document.getElementById("greasyscripts_broadcaster");
@@ -217,9 +208,11 @@ this.greasyscripts = {
 	
 	init() {
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
+		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
 	},
 	
 	unload() {
+		Cu.unload("chrome://greasyscripts/content/integrationProviders.jsm");
 		Cu.unload("chrome://greasyscripts/content/preferences.jsm");
 	}
 };
