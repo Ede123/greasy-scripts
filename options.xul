@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts">
+		<menulist>
+			<menupopup width="200px">
+				<menuitem value="1" label="Whenever visiting a new page"/>
+				<menuitem value="2" label="Only when opening the menu"/>
+			</menupopup>
+		</menulist>
+	</setting>
+
+	<setting type="control"/>
+
 	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="Enable domain cache"/>
 	<setting type="control" title="Lifetime of cache entries">
 		<setting type="integer" pref="extensions.greasyscripts.cache.max_age.number"/>
@@ -19,4 +31,5 @@
 			</menulist>
 		</setting>
 	</setting>
+
 </vbox>

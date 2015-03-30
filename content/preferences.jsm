@@ -20,6 +20,7 @@ const TIME_FROM_UNIT = {
 
 // the list of add-on preferences with names and default values
 const PREFS = {
+	MODE: {name: "mode", default: 1},
 	CACHE_ENABLED: {name: "cache.enabled", default: true},
 	CACHE_MAX_AGE_NUM: {name: "cache.max_age.number", default: 1},
 	CACHE_MAX_AGE_UNIT: {name: "cache.max_age.unit", default: "days"}
@@ -49,6 +50,10 @@ function setDefaultPrefs() {
 setDefaultPrefs();
 
 this.preferences = {
+	get mode() {
+		return branch.getIntPref(PREFS.MODE.name);
+	},
+
 	get cacheEnabled() {
 		return branch.getBoolPref(PREFS.CACHE_ENABLED.name);
 	},

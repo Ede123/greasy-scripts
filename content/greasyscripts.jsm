@@ -98,6 +98,18 @@ function updateLocation(window, uri) {
 }
 
 
+function event_popupshowing(event) {
+	var window = event.target.ownerGlobal;
+	var uri = window.gBrowser.currentURI;
+	updateLocation(window, uri);
+}
+
+function event_popuphiding(event) {
+	var window = event.target.ownerGlobal;
+	removeText(window);
+}
+
+
 this.progressListener = {
 	QueryInterface: XPCOMUtils.generateQI(["nsIWebProgressListener", "nsISupportsWeakReference"]),
 
@@ -156,13 +168,24 @@ this.greasyscripts = {
 		menuitems[0] = menuitem.cloneNode(true);
 		menuitems[1] = menuitem.cloneNode(true);
 
-		var menupopup1 = GM_menu.firstChild;
-		var menupopup2 = GM_icon.firstChild;
-		menupopup1.insertBefore(menuitems[0], menupopup1.childNodes[3]);
-		menupopup2.insertBefore(menuitems[1], menupopup2.childNodes[3]);
+		var menupopups = [];
+		menupopups[0] = GM_menu.firstChild;
+		menupopups[1] = GM_icon.firstChild;
+		menupopups[0].insertBefore(menuitems[0], menupopups[0].childNodes[3]);
+		menupopups[1].insertBefore(menuitems[1], menupopups[1].childNodes[3]);
 
-		// add a progress listener to detect location changes
-		window.gBrowser.addProgressListener(progressListener);
+		// add listeners
+		switch (preferences.mode) {
+			case 1: // progress listener to detect location changes; update constantly
+				window.gBrowser.addProgressListener(progressListener);
+				break;
+			case 2: // event listener for menupopups; update only when the popup is opened
+				for (var i = 0; i < menuitems.length; i++) {
+					menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
+					menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
+				}
+				break;
+		}
 	},
 
 	unloadFromWindow(window) {
@@ -170,12 +193,18 @@ this.greasyscripts = {
 			return;
 		var document = window.document;
 
-		// remove progress listener
+		// remove listeners (we can remove regardless of adding them or not; in the worst case it silently fails)
 		window.gBrowser.removeProgressListener(progressListener);
+
+		var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
+		for (var i = 0; i < menuitems.length; i++) {
+			menuitems[i].parentNode.removeEventListener("popupshowing", event_popupshowing, false);
+			menuitems[i].parentNode.removeEventListener("popuphiding", event_popuphiding, false);
+		}
 
 		// remove all menuitems that were inserted
 		var menuitems = document.getElementsByClassName("greasyscripts_menuitem");
-		for (var i = menuitems.length-1; i >= 0 ; i--) {
+		for (var i = menuitems.length-1; i >= 0; i--) {
 			menuitems[i].parentNode.removeChild(menuitems[i]);
 		}
 
