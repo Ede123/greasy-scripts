@@ -157,15 +157,12 @@ this.greasyscripts = {
 		broadcasterset.appendChild(broadcaster);
 
 		// create a menuitem which observes the broadcaster
-		var GM_menu = document.getElementById("gm_general_menu");
-		var GM_icon = document.getElementById("greasemonkey-tbb");
-
 		var menuitem = document.createElementNS(NS, "menuitem");
 		menuitem.classList.add("greasyscripts_menuitem");
 		menuitem.setAttribute("observes", "greasyscripts_broadcaster");
 
 		// append the menuitem in all locations the current integration provider offers
-		integrationProviders["greasemonkey"].addMenuitems(document, menuitem);
+		integrationProviders[preferences.provider].addMenuitems(document, menuitem);
 		
 		// add listeners
 		switch (preferences.mode) {
@@ -173,7 +170,7 @@ this.greasyscripts = {
 				window.gBrowser.addProgressListener(progressListener);
 				break;
 			case 2: // event listener for menupopups; update only when the popup is opened
-				var menuitems = integrationProviders["greasemonkey"].getMenuitems(document);
+				var menuitems = integrationProviders[preferences.provider].getMenuitems(document);
 				for (var i = 0; i < menuitems.length; i++) {
 					menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
 					menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
@@ -190,14 +187,14 @@ this.greasyscripts = {
 		// remove listeners (we can remove regardless of adding them or not; in the worst case it silently fails)
 		window.gBrowser.removeProgressListener(progressListener);
 
-		var menuitems = integrationProviders["greasemonkey"].getMenuitems(document);
+		var menuitems = integrationProviders[preferences.provider].getMenuitems(document);
 		for (var i = 0; i < menuitems.length; i++) {
 			menuitems[i].parentNode.removeEventListener("popupshowing", event_popupshowing, false);
 			menuitems[i].parentNode.removeEventListener("popuphiding", event_popuphiding, false);
 		}
 
 		// remove all menuitems that were inserted
-		integrationProviders["greasemonkey"].removeMenuitems(document);
+		integrationProviders[preferences.provider].removeMenuitems(document);
 
 		// remove the broadcaster
 		var broadcaster = document.getElementById("greasyscripts_broadcaster");

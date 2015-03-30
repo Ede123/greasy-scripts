@@ -2,9 +2,20 @@
 
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method">
+		<menulist>
+			<menupopup width="250px">
+				<menuitem value="native" label="Native (works without other add-ons)"/>
+				<menuitem value="greasemonkey" label="Greasemonkey"/>
+			</menupopup>
+		</menulist>
+	</setting>
+
+	<setting type="control"/>
+
 	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts">
 		<menulist>
-			<menupopup width="200px">
+			<menupopup width="250px">
 				<menuitem value="1" label="Whenever visiting a new page"/>
 				<menuitem value="2" label="Only when opening the menu"/>
 			</menupopup>

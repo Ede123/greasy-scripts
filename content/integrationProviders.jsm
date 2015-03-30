@@ -52,6 +52,11 @@ IntegrationProvider.prototype.removeMenuitems = function(document) {
 
 
 
+// the "native" service provider, that is Firefox without any specific add-on installed
+var native = new IntegrationProvider("greasyscripts_menuitem");
+native.menupopupParents = ["tools-menu" /* the tools menu */];
+native.menuitemInsertBefore = ["prefSep"];
+
 // Greasemonkey (https://addons.mozilla.org/addon/greasemonkey/)
 var greasemonkey = new IntegrationProvider("greasyscripts_menuitem");
 greasemonkey.menupopupParents = ["gm_general_menu" /* the GM menu in tools menu */, 
