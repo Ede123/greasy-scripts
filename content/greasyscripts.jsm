@@ -119,10 +119,82 @@ function event_popuphiding(event) {
 }
 
 
+function addBroadcaster(window) {
+	// expose the openScriptsLink() method in the window for usage by UI elements
+	window.greasyscripts = {openScriptsLink: greasyscripts.openScriptsLink};
+
+	// create the broadcaster
+	const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+	var broadcaster = window.document.createElementNS(NS, "broadcaster");
+	broadcaster.id = "greasyscripts_broadcaster";
+	broadcaster.setAttribute("label", "Scripts from Greasy Fork");
+	broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
+
+	// add the broadcaster
+	var broadcasterset = window.document.getElementById("mainBroadcasterSet");
+	broadcasterset.appendChild(broadcaster);
+}
+
+function removeBroadcaster(window) {
+	// remove the broadcaster
+	var broadcaster = window.document.getElementById("greasyscripts_broadcaster");
+	broadcaster.parentNode.removeChild(broadcaster);
+
+	// remove the exposed greasyscripts object from the window
+	delete window.greasyscripts;
+}
+
+
+function addMenuitems(window) {
+	// create a menuitem which observes the broadcaster
+	const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+	var menuitem = window.document.createElementNS(NS, "menuitem");
+	menuitem.classList.add("greasyscripts_menuitem");
+	menuitem.setAttribute("observes", "greasyscripts_broadcaster");
+
+	// append the menuitem in all locations the current integration provider offers
+	integrationProviders[preferences.provider].addMenuitems(window.document, menuitem);
+}
+
+function removeMenuitems(window) {
+	// remove all menuitems that were inserted for the current provider
+	integrationProviders[preferences.provider].removeMenuitems(window.document);
+}
+
+
+function addListeners(window) {
+	switch (preferences.mode) {
+		case 1: // progress listener to detect location changes; update scripts count constantly
+			window.gBrowser.addProgressListener(progressListener);
+			break;
+		case 2: // event listener for menupopups; update scripts count only when the popup is opened
+			var menuitems = integrationProviders[preferences.provider].getMenuitems(window.document);
+			for (var i = 0; i < menuitems.length; i++) {
+				menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
+				menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
+			}
+			break;
+		case 3: // none; never update scripts count
+			break;
+	}
+}
+
+function removeListeners(window) {
+	// remove listeners regardless of whether they were added or not; in the worst case the call fails silently
+	window.gBrowser.removeProgressListener(progressListener);
+
+	var menuitems = integrationProviders[preferences.provider].getMenuitems(window.document);
+	for (var i = 0; i < menuitems.length; i++) {
+		menuitems[i].parentNode.removeEventListener("popupshowing", event_popupshowing, false);
+		menuitems[i].parentNode.removeEventListener("popuphiding", event_popuphiding, false);
+	}
+}
+
+
 this.progressListener = {
 	QueryInterface: XPCOMUtils.generateQI(["nsIWebProgressListener", "nsISupportsWeakReference"]),
 
-    onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
+	onLocationChange: function(aWebProgress, aRequest, aLocation, aFlags) {
 		switch (aFlags) {
 			case Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT:
 				return;
@@ -131,13 +203,53 @@ this.progressListener = {
 				var window = Services.wm.getMostRecentWindow("navigator:browser");
 				updateLocation(window, aLocation);
 		}
-    },
+	},
 
-    onStateChange: function() {},
-    onProgressChange: function() {},
-    onStatusChange: function() {},
-    onSecurityChange: function() {}
+	onStateChange: function() {},
+	onProgressChange: function() {},
+	onStatusChange: function() {},
+	onSecurityChange: function() {}
 };
+
+
+this.preferencesObserver = {};
+this.preferencesObserverCallback = function(preferenceName) {
+	switch (preferenceName) {
+		case preferences.prefs.PROVIDER.name:
+			console.log("provider changed");
+			break;
+
+		case preferences.prefs.HIGHLIGHT.name:
+			// make sure all buttons in all windows are unhighlighted if highlighting was disabled
+			if (!preferences.highlight) {
+				var windows = Services.wm.getEnumerator("navigator:browser");
+				while (windows.hasMoreElements()) {
+					var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+					integrationProviders[preferences.provider].unhighlight(domWindow.document);
+				}
+			}
+			break;
+
+		case preferences.prefs.MODE.name:
+			var windows = Services.wm.getEnumerator("navigator:browser");
+			while (windows.hasMoreElements()) {
+				// re-register the listeners according to mode
+				var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+				removeListeners(domWindow);
+				addListeners(domWindow);
+				// unhighlight the button for unsupported modes (all except mode 1)
+				if (preferences.mode != 1)
+					integrationProviders[preferences.provider].unhighlight(domWindow.document);
+			}
+			break;
+
+		case preferences.prefs.CACHE_ENABLED.name:
+			// delete the domain cache
+			cache = {};
+			break;
+	}
+};
+
 
 
 this.greasyscripts = {
@@ -150,68 +262,29 @@ this.greasyscripts = {
 	loadIntoWindow(window) {
 		if (!window)
 			return;
-		var document = window.document;
 
-		const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+		// create a broadcaster that can be used to update attributes of multiple menuitems at once
+		addBroadcaster(window);
 
-		// create a broadcaster that can be used to update attribute of multiple menuitems at once
-		window.greasyscripts = {openScriptsLink: greasyscripts.openScriptsLink};
+		// add menuitems to the window which observe the broadcaster
+		addMenuitems(window)
 
-		var broadcaster = document.createElementNS(NS, "broadcaster");
-		broadcaster.id = "greasyscripts_broadcaster";
-		broadcaster.setAttribute("label", "Scripts from Greasy Fork");
-		broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
-
-		var broadcasterset = document.getElementById("mainBroadcasterSet");
-		broadcasterset.appendChild(broadcaster);
-
-		// create a menuitem which observes the broadcaster
-		var menuitem = document.createElementNS(NS, "menuitem");
-		menuitem.classList.add("greasyscripts_menuitem");
-		menuitem.setAttribute("observes", "greasyscripts_broadcaster");
-
-		// append the menuitem in all locations the current integration provider offers
-		integrationProviders[preferences.provider].addMenuitems(document, menuitem);
-	
-		// add listeners
-		switch (preferences.mode) {
-			case 1: // progress listener to detect location changes; update scripts count constantly
-				window.gBrowser.addProgressListener(progressListener);
-				break;
-			case 2: // event listener for menupopups; update scripts count only when the popup is opened
-				var menuitems = integrationProviders[preferences.provider].getMenuitems(document);
-				for (var i = 0; i < menuitems.length; i++) {
-					menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
-					menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
-				}
-				break;
-			case 3: // none; never update scripts count
-				break;
-		}
+		// add listeners to detect location changes / opening of menus / etc.
+		addListeners(window);
 	},
 
 	unloadFromWindow(window) {
 		if (!window)
 			return;
-		var document = window.document;
 
-		// remove listeners (we can remove regardless of adding them or not; in the worst case it silently fails)
-		window.gBrowser.removeProgressListener(progressListener);
+		// remove listeners
+		removeListeners(window);
 
-		var menuitems = integrationProviders[preferences.provider].getMenuitems(document);
-		for (var i = 0; i < menuitems.length; i++) {
-			menuitems[i].parentNode.removeEventListener("popupshowing", event_popupshowing, false);
-			menuitems[i].parentNode.removeEventListener("popuphiding", event_popuphiding, false);
-		}
-
-		// remove all menuitems that were inserted
-		integrationProviders[preferences.provider].removeMenuitems(document);
+		// remove all menuitems
+		removeMenuitems(window);
 
 		// remove the broadcaster
-		var broadcaster = document.getElementById("greasyscripts_broadcaster");
-		broadcaster.parentNode.removeChild(broadcaster);
-
-		delete window.greasyscripts;
+		removeBroadcaster(window);
 	},
 
 	init() {
@@ -224,6 +297,10 @@ this.greasyscripts = {
 		// import add-on modules
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
+
+		// register preferences obeserver
+		this.preferencesObserver = new preferencesObserver(preferencesObserverCallback);
+		this.preferencesObserver.register();
 	},
 
 	unload() {
@@ -236,5 +313,8 @@ this.greasyscripts = {
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
 		sss.unregisterSheet(uri, sss.AUTHOR_SHEET);
+
+		// unregister preferences obeserver
+		this.preferencesObserver.unregister();
 	}
 };

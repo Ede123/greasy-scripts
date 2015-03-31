@@ -5,7 +5,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/AddonManager.jsm");
 
 
-this.EXPORTED_SYMBOLS = ["preferences"];
+this.EXPORTED_SYMBOLS = ["preferences", "preferencesObserver"];
 
 
 // get the add-ons (default) preferences branch(es)
@@ -43,8 +43,10 @@ const TIME_FROM_UNIT = {
 
 
 
-// setter and getter for preferences which will be exposed by this module
+// setters and getters for preferences which will be exposed by this module
 this.preferences = {
+	prefs: PREFS,
+
 	get provider() {
 		return branch.getCharPref(PREFS.PROVIDER.name);
 	},
@@ -71,7 +73,6 @@ this.preferences = {
 };
 
 
-
 // set default preferences
 function setDefaultPrefs() {
 	for (let [key, val] in new Iterator(PREFS)) {
@@ -89,6 +90,30 @@ function setDefaultPrefs() {
 	}
 }
 setDefaultPrefs();
+
+
+
+// preferences observer
+function preferencesObserver(callback) {
+	this._callback = callback;
+}
+
+preferencesObserver.prototype = {
+	register: function() {
+		branch.addObserver("", this, false);
+	},
+
+	unregister: function() {
+		branch.removeObserver("", this);
+	},
+
+	observe: function(aSubject, aTopic, aData) {
+		if (aTopic == "nsPref:changed") {
+			this._callback(aData);
+		}
+	}
+};
+
 
 
 // check for well known integrationProviders and set provider accordingly
