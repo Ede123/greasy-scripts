@@ -145,7 +145,7 @@ function removeBroadcaster(window) {
 }
 
 
-function addMenuitems(window) {
+function addMenuitems(window, provider) {
 	// create a menuitem which observes the broadcaster
 	const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 	var menuitem = window.document.createElementNS(NS, "menuitem");
@@ -153,12 +153,14 @@ function addMenuitems(window) {
 	menuitem.setAttribute("observes", "greasyscripts_broadcaster");
 
 	// append the menuitem in all locations the current integration provider offers
-	integrationProviders[preferences.provider].addMenuitems(window.document, menuitem);
+	integrationProviders[provider ? provider : preferences.provider].addMenuitems(window.document, menuitem);
 }
 
-function removeMenuitems(window) {
+function removeMenuitems(window, provider) {
 	// remove all menuitems that were inserted for the current provider
-	integrationProviders[preferences.provider].removeMenuitems(window.document);
+	integrationProviders[provider ? provider : preferences.provider].removeMenuitems(window.document);
+	// unhighlight the toolbarbutton
+	integrationProviders[provider ? provider : preferences.provider].unhighlight(window.document);
 }
 
 
@@ -218,6 +220,15 @@ this.preferencesObserverCallback = function(preferenceName) {
 		case preferences.prefs.PROVIDER.name:
 			// TODO: currently the the provider is automatically detected on startup.
 			//       should the user be able to select a provider on his/her own?
+			
+			// remove the menuitems of the previous provider / add the menuitems of the new provider
+			var windows = Services.wm.getEnumerator("navigator:browser");
+			while (windows.hasMoreElements()) {
+				var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+				if (preferences.previousProvider)
+					removeMenuitems(domWindow, preferences.previousProvider);
+				addMenuitems(domWindow);
+			}
 			break;
 
 		case preferences.prefs.HIGHLIGHT.name:

@@ -47,10 +47,13 @@ const TIME_FROM_UNIT = {
 this.preferences = {
 	prefs: PREFS,
 
+	previousProvider: "",
+
 	get provider() {
 		return branch.getCharPref(PREFS.PROVIDER.name);
 	},
 	set provider(value) {
+		this.previousProvider = this.provider;
 		branch.setCharPref(PREFS.PROVIDER.name, value);
 	},
 
