@@ -33,7 +33,7 @@ function updateCount(window, count) {
 		setText(window, count + " available");
 
 	// if in progressListener mode highlight toolbarbutton if count > 0 (unhighlight otherwise)
-	if (preferences.mode == 1) {
+	if (preferences.highlight && preferences.mode == 1) {
 		if (count)
 			integrationProviders[preferences.provider].highlight(window.document);
 		else

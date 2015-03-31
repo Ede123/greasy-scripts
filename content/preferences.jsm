@@ -16,6 +16,7 @@ var defaultBranch = Services.prefs.getDefaultBranch(PREF_BRANCH);
 // the list of add-on preferences with names and default values
 const PREFS = {
 	PROVIDER: {name: "provider", default: "native"},
+	HIGHLIGHT: {name: "highlight", default: true},
 	MODE: {name: "mode", default: 1},
 	CACHE_ENABLED: {name: "cache.enabled", default: true},
 	CACHE_MAX_AGE_NUM: {name: "cache.max_age.number", default: 1},
@@ -49,6 +50,10 @@ this.preferences = {
 	},
 	set provider(value) {
 		branch.setCharPref(PREFS.PROVIDER.name, value);
+	},
+
+	get highlight() {
+		return branch.getBoolPref(PREFS.HIGHLIGHT.name);
 	},
 
 	get mode() {
