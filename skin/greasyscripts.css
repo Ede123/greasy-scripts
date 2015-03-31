@@ -1,5 +1,7 @@
-.greasyscripts_highlighted .toolbarbutton-icon  {
-	background-image: -moz-radial-gradient(ellipse closest-side, rgba(0, 128, 255, 0.8), rgba(0, 128, 255, 0.1)) !important;
+.greasyscripts_highlighted > toolbarbutton  > image,
+.greasyscripts_highlighted > dropmarker > image {
+	background-color: rgba(0, 128, 255, 0.05) !important;
+	box-shadow: 0 0 2px rgba(0, 128, 255, 0.5) !important;
 }
 
 
