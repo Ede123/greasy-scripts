@@ -2,13 +2,13 @@
 
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method" class="greasyscripts_setting"
+	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method (automatically detected)" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getCharPref(this.pref);
 	                              window.setTimeout(function(val) {
 	                                  var highlight = document.getElementById('highlight');
 	                                  if (val == 'native') highlight.setAttribute('style','display:none');
 	                                  else highlight.removeAttribute('style');}, 0, val)">
-		<menulist>
+		<menulist disabled="true">
 			<menupopup width="250px">
 				<menuitem value="native" label="Native (works without other add-ons)"/>
 				<menuitem value="greasemonkey" label="Greasemonkey"/>

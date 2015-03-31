@@ -216,7 +216,8 @@ this.preferencesObserver = {};
 this.preferencesObserverCallback = function(preferenceName) {
 	switch (preferenceName) {
 		case preferences.prefs.PROVIDER.name:
-			console.log("provider changed");
+			// TODO: currently the the provider is automatically detected on startup.
+			//       should the user be able to select a provider on his/her own?
 			break;
 
 		case preferences.prefs.HIGHLIGHT.name:
