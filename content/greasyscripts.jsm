@@ -299,12 +299,15 @@ this.greasyscripts = {
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
 
-		// register preferences obeserver
+		// register preferences observer
 		this.preferencesObserver = new preferencesObserver(preferencesObserverCallback);
 		this.preferencesObserver.register();
 	},
 
 	unload() {
+		// unregister preferences observer
+		this.preferencesObserver.unregister();
+
 		// unload add-on modules
 		Cu.unload("chrome://greasyscripts/content/integrationProviders.jsm");
 		Cu.unload("chrome://greasyscripts/content/preferences.jsm");
@@ -314,8 +317,5 @@ this.greasyscripts = {
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
 		sss.unregisterSheet(uri, sss.AUTHOR_SHEET);
-
-		// unregister preferences obeserver
-		this.preferencesObserver.unregister();
 	}
 };
