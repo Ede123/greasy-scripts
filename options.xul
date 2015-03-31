@@ -22,8 +22,8 @@
 
 	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getIntPref(this.pref); var highlight = document.getElementById('highlight');
-	                              if (val == 1) {highlight.value = true; highlight.removeAttribute('disabled');}
-	                              if (val == 2) {highlight.value = false; highlight.setAttribute('disabled',true);}">
+	                              if (val == 1) {highlight.removeAttribute('disabled');}
+	                              else {highlight.setAttribute('disabled',true);}">
 		<menulist>
 			<menupopup width="250px">
 				<menuitem value="1" label="Whenever visiting a new page"/>
