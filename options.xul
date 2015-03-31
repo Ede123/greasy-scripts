@@ -2,7 +2,7 @@
 
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method"
+	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getCharPref(this.pref);
 	                              window.setTimeout(function(val) {
 	                                  var highlight = document.getElementById('highlight');
@@ -16,11 +16,11 @@
 			</menupopup>
 		</menulist>
 	</setting>
-	<setting id="highlight" type="bool" pref="extensions.greasyscripts.highlight" title="Highlight toolbar button if scripts are available"/>
+	<setting id="highlight" type="bool" pref="extensions.greasyscripts.highlight" title="Highlight toolbar button if scripts are available" class="greasyscripts_setting"/>
 
-	<setting type="control"/>
+	<setting type="control" class="greasyscripts_setting"/>
 
-	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts"
+	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getIntPref(this.pref); var highlight = document.getElementById('highlight');
 	                              if (val == 1) {highlight.value = true; highlight.removeAttribute('disabled');}
 	                              if (val == 2) {highlight.value = false; highlight.setAttribute('disabled',true);}">
@@ -32,15 +32,15 @@
 		</menulist>
 	</setting>
 
-	<setting type="control"/>
+	<setting type="control" class="greasyscripts_setting"/>
 
-	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="Enable domain cache"
+	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="Enable domain cache" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getBoolPref(this.pref);
 	                              window.setTimeout(function(val) {
 	                                  var lifetime = document.getElementById('lifetime');
 	                                  if (val) {lifetime.removeAttribute('disabled'); lifetime.childNodes[0].removeAttribute('disabled'); lifetime.childNodes[1].firstChild.removeAttribute('disabled');}
 	                                  else {lifetime.setAttribute('disabled',true); lifetime.childNodes[0].setAttribute('disabled',true); lifetime.childNodes[1].firstChild.setAttribute('disabled',true);}}, 0, val)"/>
-	<setting id="lifetime" type="control" title="Lifetime of cache entries">
+	<setting id="lifetime" type="control" title="Lifetime of cache entries" class="greasyscripts_setting">
 		<setting type="integer" pref="extensions.greasyscripts.cache.max_age.number"/>
 		<setting type="menulist" pref="extensions.greasyscripts.cache.max_age.unit">
 			<menulist>

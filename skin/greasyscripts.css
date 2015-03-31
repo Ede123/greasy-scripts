@@ -10,3 +10,12 @@
 .greasyscripts_menuitem  .menu-accel[value^="0"] {
 	color: #a00;
 }
+
+
+.greasyscripts_setting[disabled] {
+	color: gray;
+}
+
+.greasyscripts_setting > setting {
+	border: none;
+}
