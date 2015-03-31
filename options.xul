@@ -28,6 +28,7 @@
 			<menupopup width="250px">
 				<menuitem value="1" label="Whenever visiting a new page"/>
 				<menuitem value="2" label="Only when opening the menu"/>
+				<menuitem value="3" label="Never"/>
 			</menupopup>
 		</menulist>
 	</setting>

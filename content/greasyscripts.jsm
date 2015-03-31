@@ -175,15 +175,17 @@ this.greasyscripts = {
 	
 		// add listeners
 		switch (preferences.mode) {
-			case 1: // progress listener to detect location changes; update constantly
+			case 1: // progress listener to detect location changes; update scripts count constantly
 				window.gBrowser.addProgressListener(progressListener);
 				break;
-			case 2: // event listener for menupopups; update only when the popup is opened
+			case 2: // event listener for menupopups; update scripts count only when the popup is opened
 				var menuitems = integrationProviders[preferences.provider].getMenuitems(document);
 				for (var i = 0; i < menuitems.length; i++) {
 					menuitems[i].parentNode.addEventListener("popupshowing", event_popupshowing, false);
 					menuitems[i].parentNode.addEventListener("popuphiding", event_popuphiding, false);
 				}
+				break;
+			case 3: // none; never update scripts count
 				break;
 		}
 	},
