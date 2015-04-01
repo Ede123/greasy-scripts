@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 
+<!DOCTYPE vbox SYSTEM "chrome://greasyscripts/locale/options.dtd">
+
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<setting type="menulist" pref="extensions.greasyscripts.provider" title="Browser integration method (automatically detected)" class="greasyscripts_setting"
+	<setting type="menulist" pref="extensions.greasyscripts.provider" title="&provider;" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getCharPref(this.pref);
 	                              window.setTimeout(function(val) {
 	                                  var highlight = document.getElementById('highlight');
@@ -10,50 +12,50 @@
 	                                  else highlight.removeAttribute('style');}, 0, val)">
 		<menulist disabled="true">
 			<menupopup width="250px">
-				<menuitem value="native" label="Native (works without other add-ons)"/>
+				<menuitem value="native" label="&provider.native;"/>
 				<menuitem value="greasemonkey" label="Greasemonkey"/>
 				<menuitem value="scriptish" label="Scriptish"/>
 			</menupopup>
 		</menulist>
 	</setting>
-	<setting id="highlight" type="bool" pref="extensions.greasyscripts.highlight" title="Highlight toolbar button if scripts are available" class="greasyscripts_setting"/>
+	<setting id="highlight" type="bool" pref="extensions.greasyscripts.highlight" title="&highlight;" class="greasyscripts_setting"/>
 
 	<setting type="control" class="greasyscripts_setting"/>
 
-	<setting type="menulist" pref="extensions.greasyscripts.mode" title="When to request the number of available scripts" class="greasyscripts_setting"
+	<setting type="menulist" pref="extensions.greasyscripts.mode" title="&mode;" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getIntPref(this.pref); var highlight = document.getElementById('highlight');
 	                              if (val == 1) {highlight.removeAttribute('disabled');}
 	                              else {highlight.setAttribute('disabled',true);}">
 		<menulist>
 			<menupopup width="250px">
-				<menuitem value="1" label="Whenever visiting a new page"/>
-				<menuitem value="2" label="Only when opening the menu"/>
-				<menuitem value="3" label="Never"/>
+				<menuitem value="1" label="&mode.1;"/>
+				<menuitem value="2" label="&mode.2;"/>
+				<menuitem value="3" label="&mode.3;"/>
 			</menupopup>
 		</menulist>
 	</setting>
 
 	<setting type="control" class="greasyscripts_setting"/>
 
-	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="Enable domain cache" class="greasyscripts_setting"
+	<setting type="bool" pref="extensions.greasyscripts.cache.enabled" title="&cache;" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getBoolPref(this.pref);
 	                              window.setTimeout(function(val) {
 	                                  var lifetime = document.getElementById('lifetime');
 	                                  if (val) {lifetime.removeAttribute('disabled'); lifetime.childNodes[0].removeAttribute('disabled'); lifetime.childNodes[1].firstChild.removeAttribute('disabled');}
 	                                  else {lifetime.setAttribute('disabled',true); lifetime.childNodes[0].setAttribute('disabled',true); lifetime.childNodes[1].firstChild.setAttribute('disabled',true);}}, 0, val)"/>
-	<setting id="lifetime" type="control" title="Lifetime of cache entries" class="greasyscripts_setting">
+	<setting id="lifetime" type="control" title="&cache.lifetime;" class="greasyscripts_setting">
 		<setting type="integer" pref="extensions.greasyscripts.cache.max_age.number"/>
 		<setting type="menulist" pref="extensions.greasyscripts.cache.max_age.unit">
 			<menulist>
 				<menupopup>
-					<menuitem value="milliseconds" label="millisecond(s)" hidden="true"/>
-					<menuitem value="seconds"      label="second(s)"      hidden="true"/>
-					<menuitem value="minutes"      label="minute(s)"      hidden="true"/>
-					<menuitem value="hours"        label="hour(s)"/>
-					<menuitem value="days"         label="day(s)"/>
-					<menuitem value="weeks"        label="week(s)"/>
-					<menuitem value="months"       label="months(s)"      hidden="true"/>
-					<menuitem value="years"        label="years(s)"       hidden="true"/>
+					<menuitem value="milliseconds" label="&cache.unit.milliseconds;" hidden="true"/>
+					<menuitem value="seconds"      label="&cache.unit.seconds;"      hidden="true"/>
+					<menuitem value="minutes"      label="&cache.unit.minutes;"      hidden="true"/>
+					<menuitem value="hours"        label="&cache.unit.hours;"/>
+					<menuitem value="days"         label="&cache.unit.days;"/>
+					<menuitem value="weeks"        label="&cache.unit.weeks;"/>
+					<menuitem value="months"       label="&cache.unit.months;"      hidden="true"/>
+					<menuitem value="years"        label="&cache.unit.years;"       hidden="true"/>
 				</menupopup>
 			</menulist>
 		</setting>

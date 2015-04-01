@@ -13,6 +13,8 @@ this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 // the domain data cache
 this.cache = {};
+// string bundle for translations
+this.stringBundle = {};
 
 
 function setText(window, text) {
@@ -30,7 +32,7 @@ function updateCount(window, count) {
 	if (typeof count === "undefined")
 		removeText(window);
 	else
-		setText(window, count + " available");
+		setText(window, count + " " + stringBundle.GetStringFromName("available"));
 
 	// if in progressListener mode highlight toolbarbutton if count > 0 (unhighlight otherwise)
 	if (preferences.highlight && preferences.mode == 1) {
@@ -127,7 +129,7 @@ function addBroadcaster(window) {
 	const NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 	var broadcaster = window.document.createElementNS(NS, "broadcaster");
 	broadcaster.id = "greasyscripts_broadcaster";
-	broadcaster.setAttribute("label", "Scripts from Greasy Fork");
+	broadcaster.setAttribute("label", stringBundle.GetStringFromName("scripts_from") + " Greasy Fork");
 	broadcaster.setAttribute("oncommand", "greasyscripts.openScriptsLink(window);");
 
 	// add the broadcaster
@@ -300,6 +302,9 @@ this.greasyscripts = {
 	},
 
 	init() {
+		// string bundle for translations
+		stringBundle = Services.strings.createBundle("chrome://greasyscripts/locale/greasyscripts.properties");
+
 		// register style sheets
 		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);

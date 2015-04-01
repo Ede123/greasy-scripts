@@ -1,0 +1,17 @@
+<!ENTITY provider "Browser integration method (automatically detected)">
+<!ENTITY provider.native "Native (works without other add-ons)">
+<!ENTITY highlight "Highlight toolbar button if scripts are available">
+<!ENTITY mode "When to request the number of available scripts">
+<!ENTITY mode.1 "Whenever visiting a new page">
+<!ENTITY mode.2 "Only when opening the menu">
+<!ENTITY mode.3 "Never">
+<!ENTITY cache "Enable domain cache">
+<!ENTITY cache.lifetime "Lifetime of cache entries">
+<!ENTITY cache.unit.milliseconds "millisecond(s)">
+<!ENTITY cache.unit.seconds "second(s)">
+<!ENTITY cache.unit.minutes "minute(s)">
+<!ENTITY cache.unit.hours "hour(s)">
+<!ENTITY cache.unit.days "day(s)">
+<!ENTITY cache.unit.weeks "week(s)">
+<!ENTITY cache.unit.months "month(s)">
+<!ENTITY cache.unit.years "year(s)">

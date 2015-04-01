@@ -1,2 +1,4 @@
 content		greasyscripts						content/
 skin		greasyscripts		classic/1.0		skin/
+
+locale		greasyscripts		en-US			locale/en-US/
