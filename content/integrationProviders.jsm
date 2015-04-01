@@ -24,7 +24,7 @@ IntegrationProvider.prototype.beforeItem = function(menupopup, spec) {
         break;
     }
 	return beforeItem;
-}
+};
 
 IntegrationProvider.prototype.addMenuitems = function(document, menuitemMaster) {
 	for (var i = 0; i < this.menupopupParents.length; i++) {

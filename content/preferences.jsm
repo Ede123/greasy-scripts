@@ -5,7 +5,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/AddonManager.jsm");
 
 
-this.EXPORTED_SYMBOLS = ["preferences", "preferencesObserver"];
+this.EXPORTED_SYMBOLS = ["preferences", "PreferencesObserver"];
 
 
 // get the add-ons (default) preferences branch(es)
@@ -97,11 +97,11 @@ setDefaultPrefs();
 
 
 // preferences observer
-function preferencesObserver(callback) {
+function PreferencesObserver(callback) {
 	this._callback = callback;
 }
 
-preferencesObserver.prototype = {
+PreferencesObserver.prototype = {
 	register: function() {
 		branch.addObserver("", this, false);
 	},

@@ -1,5 +1,5 @@
-toolbarbutton.greasyscripts_highlighted > toolbarbutton > image {
-	padding: 2px 0px;
+.greasyscripts_highlighted > toolbarbutton > image {
+	padding: 2px 0;
 	background-image: url(chrome://greasyscripts/skin/gradient.png) !important;
 	background-size: 100% 100% !important;
 	background-repeat: no-repeat !important;

@@ -222,7 +222,7 @@ this.preferencesObserverCallback = function(preferenceName) {
 		case preferences.prefs.PROVIDER.name:
 			// TODO: currently the the provider is automatically detected on startup.
 			//       should the user be able to select a provider on his/her own?
-			
+
 			// remove the menuitems of the previous provider / add the menuitems of the new provider
 			var windows = Services.wm.getEnumerator("navigator:browser");
 			while (windows.hasMoreElements()) {
@@ -281,7 +281,7 @@ this.greasyscripts = {
 		addBroadcaster(window);
 
 		// add menuitems to the window which observe the broadcaster
-		addMenuitems(window)
+		addMenuitems(window);
 
 		// add listeners to detect location changes / opening of menus / etc.
 		addListeners(window);
@@ -316,13 +316,13 @@ this.greasyscripts = {
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
 
 		// register preferences observer
-		this.preferencesObserver = new preferencesObserver(preferencesObserverCallback);
-		this.preferencesObserver.register();
+		preferencesObserver = new PreferencesObserver(preferencesObserverCallback);
+		preferencesObserver.register();
 	},
 
 	unload() {
 		// unregister preferences observer
-		this.preferencesObserver.unregister();
+		preferencesObserver.unregister();
 
 		// unload add-on modules
 		Cu.unload("chrome://greasyscripts/content/integrationProviders.jsm");
