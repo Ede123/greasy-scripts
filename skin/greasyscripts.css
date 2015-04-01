@@ -1,7 +1,8 @@
-.greasyscripts_highlighted > toolbarbutton  > image,
-.greasyscripts_highlighted > dropmarker > image {
-	background-color: rgba(0, 128, 255, 0.05) !important;
-	box-shadow: 0 0 2px rgba(0, 128, 255, 0.5) !important;
+toolbarbutton.greasyscripts_highlighted > toolbarbutton > image {
+	padding: 2px 0px;
+	background-image: url(chrome://greasyscripts/skin/gradient.png) !important;
+	background-size: 100% 100% !important;
+	background-repeat: no-repeat !important;
 }
 
 
