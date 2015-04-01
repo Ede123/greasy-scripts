@@ -1,0 +1,17 @@
+<!ENTITY provider "Integration im Browser (automatisch erkannt)">
+<!ENTITY provider.native "Nativ (funktioniert ohne andere Add-Ons)">
+<!ENTITY highlight "Den Toolbar Button hervorheben wenn Skripts verfügbar sind">
+<!ENTITY mode "Anzahl der verfügbaren Skripts abfragen">
+<!ENTITY mode.1 "Sobald eine neue Seite aufgerufen wird">
+<!ENTITY mode.2 "Nur wenn das Menü geöffnet wird">
+<!ENTITY mode.3 "Niemals">
+<!ENTITY cache "Domain Cache aktivieren">
+<!ENTITY cache.lifetime "Gültigkeitsdauer von Einträgen im Cache">
+<!ENTITY cache.unit.milliseconds "Millisekunde(n)">
+<!ENTITY cache.unit.seconds "Sekunde(n)">
+<!ENTITY cache.unit.minutes "Minute(n)">
+<!ENTITY cache.unit.hours "Stunde(n)">
+<!ENTITY cache.unit.days "Tag(e)">
+<!ENTITY cache.unit.weeks "Woche(n)">
+<!ENTITY cache.unit.months "Monat(e)">
+<!ENTITY cache.unit.years "Jahr(e)">
