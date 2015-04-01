@@ -57,6 +57,11 @@ function shutdown(data, reason) {
 	// Unload add-on modules
 	greasyscripts.unload();
 	Cu.unload("chrome://greasyscripts/content/greasyscripts.jsm");
+
+	// The AddonManager does not properly clear all add-on related caches on update (see bug 918033)
+    // In order to fully update locales and images, their caches need clearing here
+    Services.obs.notifyObservers(null, "chrome-flush-caches", null);
+	Services.obs.notifyObservers(null, "chrome-flush-skin-caches", null);
 }
 
 function install(data, reason) {}
