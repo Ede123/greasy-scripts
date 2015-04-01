@@ -7,11 +7,11 @@
 
 
 .greasyscripts_menuitem  .menu-accel {
-	color: #080;
+	color: #080 !important;
 }
 
 .greasyscripts_menuitem  .menu-accel[value^="0"] {
-	color: #a00;
+	color: #a00 !important;
 }
 
 

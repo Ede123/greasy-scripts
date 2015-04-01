@@ -268,12 +268,12 @@ this.preferencesObserverCallback = function(preferenceName) {
 
 this.greasyscripts = {
 
-	openScriptsLink(window) {
+	openScriptsLink: function(window) {
 		var domain = getDomain(window.gBrowser.currentURI);
 		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + domain);
 	},
 
-	loadIntoWindow(window) {
+	loadIntoWindow: function(window) {
 		if (!window)
 			return;
 
@@ -287,7 +287,7 @@ this.greasyscripts = {
 		addListeners(window);
 	},
 
-	unloadFromWindow(window) {
+	unloadFromWindow: function(window) {
 		if (!window)
 			return;
 
@@ -301,7 +301,7 @@ this.greasyscripts = {
 		removeBroadcaster(window);
 	},
 
-	init() {
+	init: function() {
 		// string bundle for translations
 		stringBundle = Services.strings.createBundle("chrome://greasyscripts/locale/greasyscripts.properties");
 
@@ -320,7 +320,7 @@ this.greasyscripts = {
 		preferencesObserver.register();
 	},
 
-	unload() {
+	unload: function() {
 		// unregister preferences observer
 		preferencesObserver.unregister();
 
