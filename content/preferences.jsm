@@ -43,6 +43,44 @@ const TIME_FROM_UNIT = {
 
 
 
+// set default preferences
+function setDefaultPrefs() {
+	for (let [key, val] in new Iterator(PREFS)) {
+		switch (typeof val.default) {
+			case "boolean":
+				defaultBranch.setBoolPref(val.name, val.default);
+				break;
+			case "number":
+				defaultBranch.setIntPref(val.name, val.default);
+				break;
+			case "string":
+				defaultBranch.setCharPref(val.name, val.default);
+				break;
+		}
+	}
+}
+setDefaultPrefs();
+
+
+
+// check for well known integrationProviders and set default provider accordingly
+AddonManager.getAddonsByIDs(Object.keys(ADDON_IDs), function(addons) {
+	var provider = "";
+	for (var i = 0; i < addons.length; i++) {
+		var addon = addons[i];
+		if (addon && addon.isActive && ADDON_IDs[addon.id]) {
+			provider = ADDON_IDs[addon.id];
+		}
+	}
+
+	// set default preference (if no integrationProvider found set to "native")
+	defaultBranch.setCharPref(PREFS.PROVIDER.name, provider ? provider : "native");
+});
+
+
+
+
+
 // setters and getters for preferences which will be exposed by this module
 this.preferences = {
 	prefs: PREFS,
@@ -51,10 +89,6 @@ this.preferences = {
 
 	get provider() {
 		return branch.getCharPref(PREFS.PROVIDER.name);
-	},
-	set provider(value) {
-		this.previousProvider = this.provider;
-		branch.setCharPref(PREFS.PROVIDER.name, value);
 	},
 
 	get highlight() {
@@ -74,25 +108,6 @@ this.preferences = {
 		return branch.getIntPref(PREFS.CACHE_MAX_AGE_NUM.name) * TIME_FROM_UNIT[unit];
 	}
 };
-
-
-// set default preferences
-function setDefaultPrefs() {
-	for (let [key, val] in new Iterator(PREFS)) {
-		switch (typeof val.default) {
-			case "boolean":
-				defaultBranch.setBoolPref(val.name, val.default);
-				break;
-			case "number":
-				defaultBranch.setIntPref(val.name, val.default);
-				break;
-			case "string":
-				defaultBranch.setCharPref(val.name, val.default);
-				break;
-		}
-	}
-}
-setDefaultPrefs();
 
 
 
@@ -116,19 +131,3 @@ PreferencesObserver.prototype = {
 		}
 	}
 };
-
-
-
-// check for well known integrationProviders and set provider accordingly
-AddonManager.getAddonsByIDs(Object.keys(ADDON_IDs), function(addons) {
-	for (var i = 0; i < addons.length; i++) {
-		var addon = addons[i];
-		if (addon && addon.isActive && ADDON_IDs[addon.id]) {
-			preferences.provider = ADDON_IDs[addon.id];
-			return;
-		}
-	}
-
-	// if none found reset to "native"
-	preferences.provider = "native";
-});

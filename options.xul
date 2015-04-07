@@ -10,7 +10,7 @@
 	                                  var highlight = document.getElementById('highlight');
 	                                  if (val == 'native') highlight.setAttribute('style','display:none');
 	                                  else highlight.removeAttribute('style');}, 0, val)">
-		<menulist disabled="true">
+		<menulist>
 			<menupopup width="250px">
 				<menuitem value="native" label="&provider.native;"/>
 				<menuitem value="greasemonkey" label="Greasemonkey"/>

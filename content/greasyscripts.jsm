@@ -220,8 +220,11 @@ this.preferencesObserver = {};
 this.preferencesObserverCallback = function(preferenceName) {
 	switch (preferenceName) {
 		case preferences.prefs.PROVIDER.name:
-			// TODO: currently the the provider is automatically detected on startup.
-			//       should the user be able to select a provider on his/her own?
+			// don't do anything on startup
+			if (preferences.previousProvider === "") {
+				preferences.previousProvider = preferences.provider;
+				return;
+			}
 
 			// remove the menuitems of the previous provider / add the menuitems of the new provider
 			var windows = Services.wm.getEnumerator("navigator:browser");
@@ -231,6 +234,7 @@ this.preferencesObserverCallback = function(preferenceName) {
 					removeMenuitems(domWindow, preferences.previousProvider);
 				addMenuitems(domWindow);
 			}
+			preferences.previousProvider = preferences.provider;
 			break;
 
 		case preferences.prefs.HIGHLIGHT.name:
@@ -281,6 +285,7 @@ this.greasyscripts = {
 		addBroadcaster(window);
 
 		// add menuitems to the window which observe the broadcaster
+		preferences.previousProvider = preferences.provider;
 		addMenuitems(window);
 
 		// add listeners to detect location changes / opening of menus / etc.
