@@ -77,6 +77,10 @@ AddonManager.getAddonsByIDs(Object.keys(ADDON_IDs), function(addons) {
 
 	// set default preference (if no integrationProvider found set to "native")
 	defaultBranch.setCharPref(PREFS.PROVIDER.name, provider ? provider : "native");
+
+	// reset user preference if chosen integrationProvider is not available anymore
+	if (!providersAvailable[preferences.provider])
+		branch.clearUserPref(PREFS.PROVIDER.name);
 });
 
 
