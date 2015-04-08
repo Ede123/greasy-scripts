@@ -1,4 +1,4 @@
-<!ENTITY provider "Browser integration method (automatically detected)">
+<!ENTITY provider "Browser integration method">
 <!ENTITY provider.native "Native (works without other add-ons)">
 <!ENTITY highlight "Highlight toolbar button if scripts are available">
 <!ENTITY mode "Request the number of available scripts">
