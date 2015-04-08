@@ -64,12 +64,14 @@ setDefaultPrefs();
 
 
 // check for well known integrationProviders and set default provider accordingly
+var providersAvailable = {};
 AddonManager.getAddonsByIDs(Object.keys(ADDON_IDs), function(addons) {
 	var provider = "";
 	for (var i = 0; i < addons.length; i++) {
 		var addon = addons[i];
 		if (addon && addon.isActive && ADDON_IDs[addon.id]) {
 			provider = ADDON_IDs[addon.id];
+			providersAvailable[provider] = true;
 		}
 	}
 
@@ -86,6 +88,10 @@ this.preferences = {
 	prefs: PREFS,
 
 	previousProvider: "",
+
+	get providersAvailable() {
+		return providersAvailable;
+	},
 
 	get provider() {
 		return branch.getCharPref(PREFS.PROVIDER.name);
