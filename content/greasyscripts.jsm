@@ -314,7 +314,7 @@ this.greasyscripts = {
 		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
-		sss.loadAndRegisterSheet(uri, sss.AUTHOR_SHEET);
+		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
 
 		// import add-on modules
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
@@ -337,6 +337,6 @@ this.greasyscripts = {
 		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
-		sss.unregisterSheet(uri, sss.AUTHOR_SHEET);
+		sss.unregisterSheet(uri, sss.AGENT_SHEET);
 	}
 };

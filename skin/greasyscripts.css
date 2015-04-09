@@ -1,3 +1,4 @@
+#browser-panel #navigator-toolbox #nav-bar .greasyscripts_highlighted > toolbarbutton > image,
 .greasyscripts_highlighted > toolbarbutton > image {
 	padding: 2px 0;
 	background-image: url(chrome://greasyscripts/skin/gradient.png) !important;
