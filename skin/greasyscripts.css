@@ -8,11 +8,11 @@
 }
 
 
-.greasyscripts_menuitem  .menu-accel {
+.greasyscripts_menuitem .menu-accel {
 	color: #080 !important;
 }
 
-.greasyscripts_menuitem  .menu-accel[value^="0"] {
+.greasyscripts_menuitem .menu-accel[value^="0"] {
 	color: #a00 !important;
 }
 

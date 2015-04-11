@@ -1,7 +1,5 @@
 "use strict";
 
-const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
-const console = (Cu.import("resource://gre/modules/devtools/Console.jsm", {})).console;
 
 this.EXPORTED_SYMBOLS = ["integrationProviders"];
 

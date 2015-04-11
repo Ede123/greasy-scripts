@@ -1,3 +1,6 @@
+/* globals Components, Services, XPCOMUtils */
+/* globals utils, preferences, PreferencesObserver, integrationProviders */
+/* globals stringBundle:true, cache:true, dataURI:true */
 "use strict";
 
 const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;
@@ -5,7 +8,6 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const console = (Cu.import("resource://gre/modules/devtools/Console.jsm", {})).console;
-const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttprequest;1", "nsIXMLHttpRequest");
 
 
 this.EXPORTED_SYMBOLS = ["greasyscripts"];
@@ -103,12 +105,8 @@ function updateLocation(window, uri) {
 	}
 
 	// otherwise make a new request
-	var request = new XMLHttpRequest();
-	request.open("get", "https://greasyfork.org/en/scripts/by-site/" + domain + ".json?meta=1", true);
-	request.responseType = "json";
-	request.onload = function() {updateData(window, domain, this.response);};
-	request.onerror = function(event) {console.log(event);};
-	request.send();
+	var url = "https://greasyfork.org/en/scripts/by-site/" + domain + ".json?meta=1";
+	utils.httpRequest(url, "json", function() {updateData(window, domain, this.response);} );
 }
 
 
@@ -230,24 +228,20 @@ this.preferencesObserverCallback = function(preferenceName) {
 			}
 
 			// remove the menuitems of the previous provider / add the menuitems of the new provider
-			var windows = Services.wm.getEnumerator("navigator:browser");
-			while (windows.hasMoreElements()) {
-				var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+			utils.forWindows(function(window) {
 				if (preferences.previousProvider)
-					removeMenuitems(domWindow, preferences.previousProvider);
-				addMenuitems(domWindow);
-			}
+					removeMenuitems(window, preferences.previousProvider);
+				addMenuitems(window);
+			});
 			preferences.previousProvider = preferences.provider;
 			break;
 
 		case preferences.prefs.HIGHLIGHT.name:
 			// make sure all buttons in all windows are unhighlighted if highlighting was disabled
 			if (!preferences.highlight) {
-				var windows = Services.wm.getEnumerator("navigator:browser");
-				while (windows.hasMoreElements()) {
-					var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-					integrationProviders[preferences.provider].unhighlight(domWindow.document);
-				}
+				utils.forWindows(function(window) {
+					integrationProviders[preferences.provider].unhighlight(window.document);
+				});
 			}
 			break;
 
@@ -256,16 +250,14 @@ this.preferencesObserverCallback = function(preferenceName) {
 			break;
 
 		case preferences.prefs.MODE.name:
-			var windows = Services.wm.getEnumerator("navigator:browser");
-			while (windows.hasMoreElements()) {
+			utils.forWindows(function(window) {
 				// re-register the listeners according to mode
-				var domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-				removeListeners(domWindow);
-				addListeners(domWindow);
+				removeListeners(window);
+				addListeners(window);
 				// unhighlight the button for unsupported modes (all except mode 1)
 				if (preferences.mode != 1)
-					integrationProviders[preferences.provider].unhighlight(domWindow.document);
-			}
+					integrationProviders[preferences.provider].unhighlight(window.document);
+			});
 			break;
 
 		case preferences.prefs.CACHE_ENABLED.name:
@@ -286,7 +278,7 @@ function removeDynamicCSS() {
 	}
 }
 
-function addDynamicCSS(css) {
+function addDynamicCSS() {
 	var callback = 	function(css) {
 		// get the RGB color values from preferences
 		var rgb = preferences.highlightColor;
@@ -303,15 +295,10 @@ function addDynamicCSS(css) {
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI(css, null, null);
 		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
-	}
+	};
 
 	// read the CSS file and apply dynamic changes asynchronously
-	var request = new XMLHttpRequest();
-	request.open("get", "chrome://greasyscripts/skin/dynamic.css", true);
-	request.responseType = "text";
-	request.onload = function() {callback(this.response);};
-	request.onerror = function(event) {console.log(event);};
-	request.send();
+	utils.httpRequest("chrome://greasyscripts/skin/dynamic.css", "text", function() {callback(this.response);} );
 }
 
 function updateDynamicCSS() {
@@ -362,6 +349,7 @@ this.greasyscripts = {
 		stringBundle = Services.strings.createBundle("chrome://greasyscripts/locale/greasyscripts.properties");
 
 		// import add-on modules
+		Cu.import("chrome://greasyscripts/content/utils.jsm");
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
 
@@ -370,29 +358,21 @@ this.greasyscripts = {
 		preferencesObserver.register();
 
 		// register style sheets
-		// static styles
-		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
-		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
-		// dynamic styles
-		addDynamicCSS();
+		utils.registerStyleSheet("chrome://greasyscripts/skin/greasyscripts.css", utils.AGENT_SHEET); // static styles
+		addDynamicCSS(); // dynamic styles
 	},
 
 	unload: function() {
+		// unregister style sheets
+		utils.unregisterStyleSheet("chrome://greasyscripts/skin/greasyscripts.css", utils.AGENT_SHEET); // static styles
+		removeDynamicCSS(); // dynamic styles
+
 		// unregister preferences observer
 		preferencesObserver.unregister();
 
 		// unload add-on modules
 		Cu.unload("chrome://greasyscripts/content/integrationProviders.jsm");
 		Cu.unload("chrome://greasyscripts/content/preferences.jsm");
-
-		//unregister style sheets
-		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
-		sss.unregisterSheet(uri, sss.AGENT_SHEET);
-		
-		removeDynamicCSS();
+		Cu.unload("chrome://greasyscripts/content/utils.jsm");
 	}
 };
