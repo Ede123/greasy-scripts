@@ -25,3 +25,7 @@
 .greasyscripts_setting > setting {
 	border: none !important;
 }
+
+.greasyscripts_setting > setting:not([title]) .preferences-title {
+	display: none !important;
+}
