@@ -5,7 +5,8 @@
 
 	<em:id>greasyscripts@ede123</em:id>
 	<em:name>Greasy Scripts</em:name>
-	<em:version>1.0.1</em:version>
+	<em:version>1.0.2</em:version>
+	<em:creator>Eduard Braun</em:creator>
 	<em:description>Helps you find userscripts for you favorite sites!</em:description>
 	<em:homepageURL>https://addons.mozilla.org/addon/greasy-scripts</em:homepageURL>
 
@@ -18,7 +19,7 @@
 		<!-- Firefox -->
 		<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 		<em:minVersion>15.0</em:minVersion>
-		<em:maxVersion>39.*</em:maxVersion>
+		<em:maxVersion>40.0</em:maxVersion>
 	</Description>
 	</em:targetApplication>
 
