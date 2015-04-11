@@ -1,6 +1,7 @@
 <!ENTITY provider "Integration im Browser">
 <!ENTITY provider.native "Nativ (funktioniert ohne andere Add-Ons)">
-<!ENTITY highlight "Button hervorheben wenn Skripts verfügbar sind">
+<!ENTITY highlight "Schaltfläche hervorheben wenn Skripts verfügbar sind">
+<!ENTITY highlight.color "Farbe zum Hervorheben">
 <!ENTITY mode "Anzahl der verfügbaren Skripts abfragen">
 <!ENTITY mode.1 "Sobald eine neue Seite aufgerufen wird">
 <!ENTITY mode.2 "Nur wenn das Menü geöffnet wird">

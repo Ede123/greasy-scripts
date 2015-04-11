@@ -22,7 +22,7 @@
 	</setting>
 	<setting id="highlight" type="control" title="&highlight;" class="greasyscripts_setting">
 		<setting type="bool" pref="extensions.greasyscripts.highlight" class="greasyscripts_setting"/>
-		<setting type="color" pref="extensions.greasyscripts.highlight.color" title="highlighting color ⇒" class="greasyscripts_setting"/>
+		<setting type="color" pref="extensions.greasyscripts.highlight.color" title="&highlight.color; ⇒" class="greasyscripts_setting"/>
 	</setting>
 
 	<setting type="control" class="greasyscripts_setting"/>

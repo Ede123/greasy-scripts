@@ -1,6 +1,7 @@
 <!ENTITY provider "Browser integration method">
 <!ENTITY provider.native "Native (works without other add-ons)">
 <!ENTITY highlight "Highlight toolbar button if scripts are available">
+<!ENTITY highlight.color "highlighting color">
 <!ENTITY mode "Request the number of available scripts">
 <!ENTITY mode.1 "Whenever visiting a new page">
 <!ENTITY mode.2 "Only when opening the menu">
