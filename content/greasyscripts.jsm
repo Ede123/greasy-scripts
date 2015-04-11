@@ -11,10 +11,13 @@ const XMLHttpRequest = Components.Constructor("@mozilla.org/xmlextras/xmlhttpreq
 this.EXPORTED_SYMBOLS = ["greasyscripts"];
 
 
-// the domain data cache
-this.cache = {};
 // string bundle for translations
 this.stringBundle = {};
+
+// the domain data cache
+this.cache = {};
+// dataURI for dynamic styles (needed to remove the style sheet later on)
+this.dataURI = "";
 
 
 function setText(window, text) {
@@ -248,6 +251,10 @@ this.preferencesObserverCallback = function(preferenceName) {
 			}
 			break;
 
+		case preferences.prefs.HIGHLIGHT_COLOR.name:
+			updateDynamicCSS();
+			break;
+
 		case preferences.prefs.MODE.name:
 			var windows = Services.wm.getEnumerator("navigator:browser");
 			while (windows.hasMoreElements()) {
@@ -267,6 +274,50 @@ this.preferencesObserverCallback = function(preferenceName) {
 			break;
 	}
 };
+
+
+function removeDynamicCSS() {
+	if(dataURI) {
+		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		var uri = ios.newURI(dataURI, null, null);
+		sss.unregisterSheet(uri, sss.AGENT_SHEET);
+		dataURI = "";
+	}
+}
+
+function addDynamicCSS(css) {
+	var callback = 	function(css) {
+		// get the RGB color values from preferences
+		var rgb = preferences.highlightColor;
+		var rgbString = rgb[0] + "," + rgb[1] + "," + rgb[2];
+		var backgroundImage = "-moz-linear-gradient(center top , rgba(" + rgbString + ",0.1), rgba(" + rgbString + ",1))";
+		
+		// build the CSS data: URI
+		css = css.replace(/%background-image%/, backgroundImage);
+		css = "data:text/css;charset=utf-8," + encodeURIComponent(css);
+		dataURI = css; // store dataURI to be able to remove the style sheet later;
+
+		// add the style sheet
+		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		var uri = ios.newURI(css, null, null);
+		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
+	}
+
+	// read the CSS file and apply dynamic changes asynchronously
+	var request = new XMLHttpRequest();
+	request.open("get", "chrome://greasyscripts/skin/dynamic.css", true);
+	request.responseType = "text";
+	request.onload = function() {callback(this.response);};
+	request.onerror = function(event) {console.log(event);};
+	request.send();
+}
+
+function updateDynamicCSS() {
+	removeDynamicCSS();
+	addDynamicCSS();
+}
 
 
 
@@ -310,12 +361,6 @@ this.greasyscripts = {
 		// string bundle for translations
 		stringBundle = Services.strings.createBundle("chrome://greasyscripts/locale/greasyscripts.properties");
 
-		// register style sheets
-		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
-		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
-
 		// import add-on modules
 		Cu.import("chrome://greasyscripts/content/preferences.jsm");
 		Cu.import("chrome://greasyscripts/content/integrationProviders.jsm");
@@ -323,6 +368,15 @@ this.greasyscripts = {
 		// register preferences observer
 		preferencesObserver = new PreferencesObserver(preferencesObserverCallback);
 		preferencesObserver.register();
+
+		// register style sheets
+		// static styles
+		var sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
+		sss.loadAndRegisterSheet(uri, sss.AGENT_SHEET);
+		// dynamic styles
+		addDynamicCSS();
 	},
 
 	unload: function() {
@@ -338,5 +392,7 @@ this.greasyscripts = {
 		var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 		var uri = ios.newURI("chrome://greasyscripts/skin/greasyscripts.css", null, null);
 		sss.unregisterSheet(uri, sss.AGENT_SHEET);
+		
+		removeDynamicCSS();
 	}
 };

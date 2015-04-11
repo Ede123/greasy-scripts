@@ -1,0 +1,6 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#browser-panel #navigator-toolbox #nav-bar .greasyscripts_highlighted > toolbarbutton > image,
+.greasyscripts_highlighted > toolbarbutton > image {
+	background-image: %background-image% !important;
+}

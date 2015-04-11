@@ -20,14 +20,17 @@
 			</menupopup>
 		</menulist>
 	</setting>
-	<setting id="highlight" type="bool" pref="extensions.greasyscripts.highlight" title="&highlight;" class="greasyscripts_setting"/>
+	<setting id="highlight" type="control" title="&highlight;" class="greasyscripts_setting">
+		<setting type="bool" pref="extensions.greasyscripts.highlight" class="greasyscripts_setting"/>
+		<setting type="color" pref="extensions.greasyscripts.highlight.color" title="highlighting color ⇒" class="greasyscripts_setting"/>
+	</setting>
 
 	<setting type="control" class="greasyscripts_setting"/>
 
 	<setting type="menulist" pref="extensions.greasyscripts.mode" title="&mode;" class="greasyscripts_setting"
 	         onpreferencechanged="var val = Services.prefs.getIntPref(this.pref); var highlight = document.getElementById('highlight');
-	                              if (val == 1) {highlight.removeAttribute('disabled');}
-	                              else {highlight.setAttribute('disabled',true);}">
+	                              if (val == 1) {highlight.removeAttribute('disabled'); highlight.childNodes[0].removeAttribute('disabled'); highlight.childNodes[1].removeAttribute('disabled')}
+	                              else {highlight.setAttribute('disabled',true); highlight.childNodes[0].setAttribute('disabled',true); highlight.childNodes[1].setAttribute('disabled',true);}">
 		<menulist>
 			<menupopup width="250px">
 				<menuitem value="1" label="&mode.1;"/>

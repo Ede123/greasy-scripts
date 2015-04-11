@@ -17,6 +17,7 @@ var defaultBranch = Services.prefs.getDefaultBranch(PREF_BRANCH);
 const PREFS = {
 	PROVIDER: {name: "provider", default: "native"},
 	HIGHLIGHT: {name: "highlight", default: true},
+	HIGHLIGHT_COLOR: {name: "highlight.color", default: "#3366FF"},
 	MODE: {name: "mode", default: 1},
 	CACHE_ENABLED: {name: "cache.enabled", default: true},
 	CACHE_MAX_AGE_NUM: {name: "cache.max_age.number", default: 1},
@@ -103,6 +104,15 @@ this.preferences = {
 
 	get highlight() {
 		return branch.getBoolPref(PREFS.HIGHLIGHT.name);
+	},
+	
+	get highlightColor() {
+		var hex = branch.getCharPref(PREFS.HIGHLIGHT_COLOR.name);
+		var rgb = [];
+		rgb[0] = parseInt(hex.substr(1,2), 16);
+		rgb[1] = parseInt(hex.substr(3,2), 16);
+		rgb[2] = parseInt(hex.substr(5,2), 16);
+		return rgb;
 	},
 
 	get mode() {

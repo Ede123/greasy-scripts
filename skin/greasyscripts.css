@@ -3,7 +3,6 @@
 #browser-panel #navigator-toolbox #nav-bar .greasyscripts_highlighted > toolbarbutton > image,
 .greasyscripts_highlighted > toolbarbutton > image {
 	padding: 2px 0;
-	background-image: url(chrome://greasyscripts/skin/gradient.png) !important;
 	background-size: 100% 100% !important;
 	background-repeat: no-repeat !important;
 }
@@ -24,6 +23,10 @@
 
 .greasyscripts_setting > setting {
 	border: none !important;
+}
+
+.greasyscripts_setting > setting .preferences-title {
+	font-style: italic;
 }
 
 .greasyscripts_setting > setting:not([title]) .preferences-title {
