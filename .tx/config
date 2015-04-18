@@ -1,0 +1,16 @@
+[main]
+host = https://www.transifex.com
+
+[greasy-scripts.greasyscriptsproperties]
+file_filter = locale/<lang>/greasyscripts.properties
+source_file = locale/en_US/greasyscripts.properties
+source_lang = en_US
+type = MOZILLAPROPERTIES
+minimum_perc = 1
+
+[greasy-scripts.optionsdtd]
+file_filter = locale/<lang>/options.dtd
+source_file = locale/en_US/options.dtd
+source_lang = en_US
+type = DTD
+minimum_perc = 1
