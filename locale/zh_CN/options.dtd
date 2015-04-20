@@ -1,0 +1,18 @@
+<!ENTITY provider "浏览器整合方式">
+<!ENTITY provider.native "原生 (无须其他附加组件)">
+<!ENTITY highlight "有脚本可用时高亮工具栏按钮">
+<!ENTITY highlight.color "高亮颜色">
+<!ENTITY mode "请求可用脚本数量">
+<!ENTITY mode.1 "每次访问新页面">
+<!ENTITY mode.2 "仅在打开菜单时">
+<!ENTITY mode.3 "从不">
+<!ENTITY cache "启用域名缓存">
+<!ENTITY cache.lifetime "缓存内容存活期">
+<!ENTITY cache.unit.milliseconds "毫秒">
+<!ENTITY cache.unit.seconds "秒">
+<!ENTITY cache.unit.minutes "分钟">
+<!ENTITY cache.unit.hours "小时">
+<!ENTITY cache.unit.days "天">
+<!ENTITY cache.unit.weeks "周">
+<!ENTITY cache.unit.months "个月">
+<!ENTITY cache.unit.years "年">
