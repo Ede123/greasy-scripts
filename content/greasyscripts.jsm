@@ -312,7 +312,7 @@ this.greasyscripts = {
 
 	openScriptsLink: function(window) {
 		var domain = getDomain(window.gBrowser.currentURI);
-		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/en/scripts/by-site/" + domain);
+		window.gBrowser.selectedTab = window.gBrowser.addTab("https://greasyfork.org/scripts/by-site/" + domain);
 	},
 
 	loadIntoWindow: function(window) {
