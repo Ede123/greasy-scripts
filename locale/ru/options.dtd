@@ -1,0 +1,18 @@
+<!ENTITY provider "Метод интеграции в браузер">
+<!ENTITY provider.native "Самодостаточный (не требует других дополнений для работы)">
+<!ENTITY highlight "Подсвечивать кнопку если доступны скрипты">
+<!ENTITY highlight.color "цвет подсветки">
+<!ENTITY mode "Запрашивать количество доступных скриптов">
+<!ENTITY mode.1 "Сразу при посещении страницы">
+<!ENTITY mode.2 "Только после открытия меню">
+<!ENTITY mode.3 "Никогда">
+<!ENTITY cache "Запоминать домены">
+<!ENTITY cache.lifetime "Как долго помнить домены">
+<!ENTITY cache.unit.milliseconds "миллисекунд(ы)">
+<!ENTITY cache.unit.seconds "секунд(ы)">
+<!ENTITY cache.unit.minutes "минут(ы)">
+<!ENTITY cache.unit.hours "часов(а)">
+<!ENTITY cache.unit.days "дней(я)">
+<!ENTITY cache.unit.weeks "недель(и)">
+<!ENTITY cache.unit.months "месяцев(а)">
+<!ENTITY cache.unit.years "лет(год)">
