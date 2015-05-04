@@ -61,8 +61,8 @@ function getDomain(uri) {
 			domain = uri.host;
 		else if (uri.spec.indexOf("about:") === 0) // special pages (e.g. about:addons)
 			domain = uri.spec;
-		else
-			console.log("Error parsing URI: " + uri.spec + "\n" + e.message);
+		// else
+		// 	console.log("Error parsing URI: " + uri.spec + "\n" + e.message);
 	}
 
 	return domain;
