@@ -1,0 +1,18 @@
+<!ENTITY provider "Intégration dans le navigateur">
+<!ENTITY provider.native "Native (fonctionne sans autre add-on)">
+<!ENTITY highlight "Surligner le bouton dans la barre d'outils si des scripts sont disponibles">
+<!ENTITY highlight.color "Couleur de surlignage">
+<!ENTITY mode "Récupérer le nombre de scripts disponibles">
+<!ENTITY mode.1 "À chaque fois que je visite une nouvelle page">
+<!ENTITY mode.2 "Seulement quand j'ouvre le menu">
+<!ENTITY mode.3 "Jamais">
+<!ENTITY cache "Activer le cache par domaine">
+<!ENTITY cache.lifetime "Durée de mise en cache">
+<!ENTITY cache.unit.milliseconds "milliseconde(s)">
+<!ENTITY cache.unit.seconds "seconde(s)">
+<!ENTITY cache.unit.minutes "minute(s)">
+<!ENTITY cache.unit.hours "heure(s)">
+<!ENTITY cache.unit.days "jour(s)">
+<!ENTITY cache.unit.weeks "semaine(s)">
+<!ENTITY cache.unit.months "mois">
+<!ENTITY cache.unit.years "an(s)">

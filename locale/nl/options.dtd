@@ -1,0 +1,18 @@
+<!ENTITY provider "Browser-integratiemethode">
+<!ENTITY provider.native "Ingebouwd (werkt zonder andere add-ons)">
+<!ENTITY highlight "Markeer de werkbalkknop als er scripts beschikbaar zijn">
+<!ENTITY highlight.color "markeringskleur">
+<!ENTITY mode "Vraag het aantal beschikbare scripts op">
+<!ENTITY mode.1 "Wanneer u een nieuwe pagina bezoekt">
+<!ENTITY mode.2 "Alleen wanneer u het menu opent">
+<!ENTITY mode.3 "Nooit">
+<!ENTITY cache "Domeinnaamcache inschakelen">
+<!ENTITY cache.lifetime "Levensduur van cache-items">
+<!ENTITY cache.unit.milliseconds "miliseconde(n)">
+<!ENTITY cache.unit.seconds "seconde(n)">
+<!ENTITY cache.unit.minutes "minu(u)t(en)">
+<!ENTITY cache.unit.hours "uur">
+<!ENTITY cache.unit.days "dag(en)">
+<!ENTITY cache.unit.weeks "we(e)k(en)">
+<!ENTITY cache.unit.months "maand(en)">
+<!ENTITY cache.unit.years "jaar">
