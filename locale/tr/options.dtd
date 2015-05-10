@@ -1,0 +1,18 @@
+<!ENTITY provider "Tarayıcı ekleme modu">
+<!ENTITY provider.native "Varsayılahn (Eklentiler olmadan çalıştır)">
+<!ENTITY highlight "Betik bulunduğunda çubuğu belirginleştir">
+<!ENTITY highlight.color "belirginleştirme rengi">
+<!ENTITY mode "Betik sayısını iste">
+<!ENTITY mode.1 "Sayfa ziyaret edildiğinde">
+<!ENTITY mode.2 "Sadece menu açıldığında">
+<!ENTITY mode.3 "Asla">
+<!ENTITY cache "Sunucu önbelleğini etkinleştir">
+<!ENTITY cache.lifetime "Sınırsız önbellek">
+<!ENTITY cache.unit.milliseconds "salise(s)">
+<!ENTITY cache.unit.seconds "saniye(s)">
+<!ENTITY cache.unit.minutes "dakika(s)">
+<!ENTITY cache.unit.hours "saat(s)">
+<!ENTITY cache.unit.days "gün(s)">
+<!ENTITY cache.unit.weeks "hafta(s)">
+<!ENTITY cache.unit.months "ay(s)">
+<!ENTITY cache.unit.years "yıl(s)">
