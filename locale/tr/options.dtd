@@ -1,0 +1,18 @@
+<!ENTITY provider "Tarayıcıya entegre biçimi">
+<!ENTITY provider.native "Kendiliğinden (başka eklentiye ihtiyaç duymaz)">
+<!ENTITY highlight "Uygun betik varsa araç çubuğunu renklendir">
+<!ENTITY highlight.color "renk">
+<!ENTITY mode "Uygun betik sayısını göster">
+<!ENTITY mode.1 "Sayfayı ziyaret ettiğinde">
+<!ENTITY mode.2 "Menuyu açtığında">
+<!ENTITY mode.3 "Asla">
+<!ENTITY cache "Sunucu önbelleğini etkinleştir">
+<!ENTITY cache.lifetime "Sonsuz bellek girişi">
+<!ENTITY cache.unit.milliseconds "salise(s)">
+<!ENTITY cache.unit.seconds "saniye(s)">
+<!ENTITY cache.unit.minutes "dakika(s)">
+<!ENTITY cache.unit.hours "saat(s)">
+<!ENTITY cache.unit.days "gün(s)">
+<!ENTITY cache.unit.weeks "hafta(s)">
+<!ENTITY cache.unit.months "ay(s)">
+<!ENTITY cache.unit.years "yıl(s)">
