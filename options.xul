@@ -11,9 +11,9 @@
 	                                  if (val == 'native') highlight.setAttribute('style','display:none');
 	                                  else highlight.removeAttribute('style');}, 0, val)">
 		<menulist>
-			<menupopup width="250px" onpopupshowing="Cu.import('chrome://greasyscripts/content/preferences.jsm');
-			                                         if (!preferences.providersAvailable['greasemonkey']) this.childNodes[1].setAttribute('disabled','true');
-			                                         if (!preferences.providersAvailable['scriptish']) this.childNodes[2].setAttribute('disabled','true');">
+			<menupopup onpopupshowing="Cu.import('chrome://greasyscripts/content/preferences.jsm');
+			                           if (!preferences.providersAvailable['greasemonkey']) this.childNodes[1].setAttribute('disabled','true');
+			                           if (!preferences.providersAvailable['scriptish']) this.childNodes[2].setAttribute('disabled','true');">
 				<menuitem value="native" label="&provider.native;"/>
 				<menuitem value="greasemonkey" label="Greasemonkey"/>
 				<menuitem value="scriptish" label="Scriptish"/>
@@ -32,7 +32,7 @@
 	                              if (val == 1) {highlight.removeAttribute('disabled'); highlight.childNodes[0].removeAttribute('disabled'); highlight.childNodes[1].removeAttribute('disabled')}
 	                              else {highlight.setAttribute('disabled',true); highlight.childNodes[0].setAttribute('disabled',true); highlight.childNodes[1].setAttribute('disabled',true);}">
 		<menulist>
-			<menupopup width="250px">
+			<menupopup>
 				<menuitem value="1" label="&mode.1;"/>
 				<menuitem value="2" label="&mode.2;"/>
 				<menuitem value="3" label="&mode.3;"/>
