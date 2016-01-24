@@ -1,0 +1,18 @@
+<!ENTITY provider "瀏覽器整合方式">
+<!ENTITY provider.native "原生 (運作無需其他擴充套件)">
+<!ENTITY highlight "有腳本可用時高亮工具列按鈕">
+<!ENTITY highlight.color "高亮顏色">
+<!ENTITY mode "請求可用腳本的數量">
+<!ENTITY mode.1 "每次前往新頁面時">
+<!ENTITY mode.2 "僅限於開啟選單時">
+<!ENTITY mode.3 "永不">
+<!ENTITY cache "啟用網域快取">
+<!ENTITY cache.lifetime "快取項目有效期限">
+<!ENTITY cache.unit.milliseconds "毫秒">
+<!ENTITY cache.unit.seconds "秒">
+<!ENTITY cache.unit.minutes "分鐘">
+<!ENTITY cache.unit.hours "小時">
+<!ENTITY cache.unit.days "天">
+<!ENTITY cache.unit.weeks "禮拜">
+<!ENTITY cache.unit.months "個月">
+<!ENTITY cache.unit.years "年">
